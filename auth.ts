@@ -1,8 +1,7 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { supabase } from "@/providers/db";
-import { useStyleRegistry } from "styled-jsx";
-import { UserPlus } from "lucide-react";
+
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
   providers: [
@@ -34,25 +33,35 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         const { data: user, error } = await query;
 
         if (error || !user) {
-          throw new Error("No user found with the entered identifier.");
+          return null; // This will trigger a redirect to the signIn page
         }
 
         // Validate password
         if (user.password !== password) {
-          throw new Error("Incorrect password.");
+          return null; // This will trigger a redirect to the signIn page
         }
 
-        // Return user object in the format NextAuth expects
-        return {
-          name: user.name,
-          id: user.p_id
-        };
+        // Return the full user object
+        return user;
       },
     }),
   ],
 
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.user = user; // Store full user object in JWT
+      }
+      return token;
+    },
+    async session({ session, token }: any) {
+      session.user = token.user;
+      return session;
+    },
+  },
+
   pages: {
-    signIn: "/auth/patientlogin", // Custom login page (optional)
-    error: "/auth/error", // Error page (optional)
+    signIn: "/auth/patientlogin",
+    error: "/auth/error",
   },
 });

@@ -1,9 +1,8 @@
 'use client'
 import React, { useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import Link from "next/link";
-import { auth } from "@/auth";
 
 const LoginPage: React.FC = () => {
   const [loginMethod, setLoginMethod] = useState("email");
@@ -28,9 +27,11 @@ const LoginPage: React.FC = () => {
 
       if(!!res?.error) {
         console.log(res, "its error");
+      
         setError(res.error);
       }
       else if (res?.ok) {
+        redirect('/patientinfo');
         console.log(res, "its ok");
       }
     } finally {
