@@ -94,37 +94,34 @@ const PatientInfoPage: React.FC = () => {
   // Simulate loading state for better UX
   useEffect(() => {
     const getPatient = async () => {
-      try{
+      try {
         const response = await fetch('/api/getpatient', {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          });
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
         
-      if(response.ok){
-        const data = await response.json();
-      const info = data.user; 
-        console.log(data, 'data');
-        setLoading(false);
-        setMockPatient(info);
-      } else {
-        console.log(response, 'response');
+        if (response.ok) {
+          const data = await response.json();
+          const info = data.user;
+          if (info) {
+            setLoading(false);
+            setMockPatient(info);
+          } else {
+            router.push('/auth/patientlogin');
+          }
+        } else {
+          router.push('/auth/patientlogin');
+        }
+      } catch (error) {
+        router.push('/auth/patientlogin');
       }
-    } catch (error) {
-      console.error('Error fetching patient data:', error);
-      setError('Error fetching patient data');
-    }
-  };
-  getPatient();   
-  }, []);
+    };
+    getPatient();   
+  }, [router]);
 
-  if (error) {
-    // Redirect to homepage if there's an error
-    redirect("/auth/patientlogin");
-    return; 
-  }
-  if (loading && !error) {
+  if (loading) {
     return (
       <div className="flex h-screen items-center justify-center bg-gradient-to-r from-blue-100 to-purple-100">
         <div className="text-center">

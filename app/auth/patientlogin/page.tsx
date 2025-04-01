@@ -1,8 +1,9 @@
 'use client'
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { signIn } from "next-auth/react";
-import { redirect, useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
 import Link from "next/link";
+import LogoutButton from "@/components/Logoutbutton";
 
 const LoginPage: React.FC = () => {
   const [loginMethod, setLoginMethod] = useState("email");
@@ -11,7 +12,6 @@ const LoginPage: React.FC = () => {
   const [error, setError] = useState('FINE');
   const [isLoading, setIsLoading] = useState(false);
 
-  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     
@@ -32,7 +32,6 @@ const LoginPage: React.FC = () => {
       }
       else if (res?.ok) {
         redirect('/patientinfo');
-        console.log(res, "its ok");
       }
     } finally {
       setIsLoading(false);
