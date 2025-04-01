@@ -8,7 +8,8 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     Credentials({
       name: "Credentials",
       credentials: {
-        identifier: { label: "identifier", type: "text", placeholder: "Enter email or phone" },
+        role: { label: "role", type: "text", placeholder: "Enter role" },
+        identifier: { label: "identifier", type: "text", placeholder: "Enter email or phone or doctor id" },
         loginMethod: { label: "loginMethod", type: "text", placeholder: "Enter login method" },
         password: { label: "password", type: "password" },
       },
@@ -25,6 +26,9 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
           query = supabase.from("patients").select("*").eq("email_id", identifier).maybeSingle();
         } else if (loginMethod === "phone") {
           query = supabase.from("patients").select("*").eq("mobile_no", identifier).maybeSingle();
+        }
+        else if(loginMethod === "doctorId") {
+          query = supabase.from("doctor").select("*").eq("login_id", identifier).maybeSingle();
         } else {
           throw new Error("Invalid login method. Use 'email' or 'mobile'.");
         }

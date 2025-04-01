@@ -4,7 +4,7 @@ import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 export default function DoctorLogin() {
-  const router = useRouter();
+    const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({
@@ -23,7 +23,7 @@ export default function DoctorLogin() {
     setError('');
 
     try {
-      const result = await signIn('credentials', {
+      const res = await signIn('credentials', {
         role: 'doctor',
         identifier: formData.doctorId,
         loginMethod: 'doctorId',
@@ -31,19 +31,19 @@ export default function DoctorLogin() {
         redirect: false,
       });
 
-      if(result?.ok) {
-        console.log("in ok");
+      if(res?.error) {
+        console.log(res, "its error");
+        setError(res.error);
       }
-
-      else if (result?.error) {
-        setError('Invalid doctor ID or password');
-        console.log("in error");
-        return;
+      else  {
+        router.push('/doctor/doctorinfo');
+        
       }
 
       // Successful login
      
     } catch (error) {
+        console.log(error, "its error");
       setError('An error occurred during login');
     } finally {
       setLoading(false);

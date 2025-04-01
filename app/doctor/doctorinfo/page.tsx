@@ -1,5 +1,7 @@
 "use client"
 import React, { useEffect, useState } from 'react'
+import LogoutButton from '@/components/Logoutbutton';
+import { useRouter } from 'next/navigation';
 
 interface DoctorInfo {
   name: string;
@@ -17,7 +19,7 @@ const DoctorInfoPage = () => {
   const [doctorInfo, setDoctorInfo] = useState<DoctorInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  const router = useRouter();
   useEffect(() => {
     const getDoctorInfo = async () => {
       try {
@@ -36,14 +38,12 @@ const DoctorInfoPage = () => {
         setDoctorInfo(data.user);
         setLoading(false);
       } catch (error) {
-        console.error(error);
-        setError('Failed to load doctor information');
-        setLoading(false);
+        router.push('/auth/doctorlogin');
       }
     };
 
     getDoctorInfo();
-  }, []);
+  }, [router]);
 
   if (loading) {
     return (
@@ -56,17 +56,7 @@ const DoctorInfoPage = () => {
     );
   }
 
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center text-red-600">
-          <div className="text-4xl mb-4">⚠️</div>
-          <p>{error}</p>
-        </div>
-      </div>
-    );
-  }
-
+  
   if (!doctorInfo) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -165,6 +155,7 @@ const DoctorInfoPage = () => {
             <p className="text-sm text-gray-500">
               Last updated: {new Date().toLocaleDateString()}
             </p>
+            <LogoutButton />
           </div>
         </div>
       </div>
