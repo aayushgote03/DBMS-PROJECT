@@ -4,7 +4,7 @@ import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 export default function DoctorLogin() {
-    const router = useRouter();
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({
@@ -33,11 +33,10 @@ export default function DoctorLogin() {
 
       if(res?.error) {
         console.log(res, "its error");
-        setError(res.error);
+        setError("Invalid credentials");
       }
       else  {
         router.push('/doctor/doctorinfo');
-        
       }
 
       // Successful login
