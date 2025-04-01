@@ -4,12 +4,12 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import LogoutButton from '@/components/Logoutbutton'
 
-const AdminLayout = ({ children }: { children: React.ReactNode }) => {
+const PatientLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   const isActive = (path: string) => {
-    return pathname === path ? 'bg-blue-700 text-white' : 'text-gray-300 hover:bg-blue-700 hover:text-white'
+    return pathname === path ? 'bg-purple-700 text-white' : 'text-gray-300 hover:bg-purple-700 hover:text-white'
   }
 
   const toggleMobileMenu = () => {
@@ -19,16 +19,16 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Fixed Navbar */}
-      <nav className="fixed top-0 left-0 right-0 bg-blue-800 shadow-lg z-50">
+      <nav className="fixed top-0 left-0 right-0 bg-purple-800 shadow-lg z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo and Brand */}
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <span className="text-2xl">🏥</span>
+                <span className="text-2xl">👤</span>
               </div>
               <div className="ml-3">
-                <span className="text-white font-semibold text-xl">Admin Dashboard</span>
+                <span className="text-white font-semibold text-xl">Patient Portal</span>
               </div>
             </div>
 
@@ -37,21 +37,27 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
               <div className="ml-10 flex items-baseline space-x-4">
                 <Link
                   href="/"
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${isActive('/admin/dashboard')}`}
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${isActive('/')}`}
                 >
                   Home
                 </Link>
                 <Link
-                  href="/admin/adddoctor"
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${isActive('/admin/adddoctor')}`}
+                  href="/patient/appointments"
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${isActive('/patient/appointments')}`}
                 >
-                  Add Doctor
+                  edit data
                 </Link>
                 <Link
-                  href="/admin/admininfo"
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${isActive('/admin/admininfo')}`}
+                  href="/patient/patientinfo"
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${isActive('/patient/patientinfo')}`}
                 >
                   Profile
+                </Link>
+                <Link
+                  href="/patient/viewdoctors"
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${isActive('/patient/viewdoctors')}`}
+                >
+                  view doctors
                 </Link>
               </div>
             </div>
@@ -60,7 +66,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
             <div className="md:hidden">
               <button
                 onClick={toggleMobileMenu}
-                className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+                className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
               >
                 <span className="sr-only">Open main menu</span>
                 {!isMobileMenuOpen ? (
@@ -88,7 +94,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
             isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
           } overflow-hidden`}
         >
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-blue-800">
+          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-purple-800">
             <Link
               href="/"
               className={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${isActive('/')}`}
@@ -97,18 +103,25 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
               Home
             </Link>
             <Link
-              href="/admin/adddoctor"
-              className={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${isActive('/admin/adddoctor')}`}
+              href="/patient/appointments"
+              className={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${isActive('/patient/appointments')}`}
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              Add Doctor
+              Appointments
             </Link>
             <Link
-              href="/admin/admininfo"
-              className={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${isActive('/admin/admininfo')}`}
+              href="/patient/profile"
+              className={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${isActive('/patient/profile')}`}
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Profile
+            </Link>
+            <Link
+              href="/patient/prescriptions"
+              className={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${isActive('/patient/prescriptions')}`}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Prescriptions
             </Link>
             <div className="px-3 py-2">
               <LogoutButton />
@@ -125,4 +138,4 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   )
 }
 
-export default AdminLayout
+export default PatientLayout

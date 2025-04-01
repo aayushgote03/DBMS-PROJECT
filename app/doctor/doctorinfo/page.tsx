@@ -18,7 +18,7 @@ interface DoctorInfo {
 const DoctorInfoPage = () => {
   const [doctorInfo, setDoctorInfo] = useState<DoctorInfo | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+
   const router = useRouter();
   useEffect(() => {
     const getDoctorInfo = async () => {
@@ -45,6 +45,13 @@ const DoctorInfoPage = () => {
     getDoctorInfo();
   }, [router]);
 
+  const formatSchedule = (schedule: string) => {
+    if (!schedule) return [];
+    
+    // Split the schedule string by commas and clean up each entry
+    return schedule.split(',').map(s => s.trim());
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -56,7 +63,6 @@ const DoctorInfoPage = () => {
     );
   }
 
-  
   if (!doctorInfo) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -67,6 +73,8 @@ const DoctorInfoPage = () => {
       </div>
     );
   }
+
+  const scheduleItems = formatSchedule(doctorInfo.schedule);
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4">
@@ -137,9 +145,16 @@ const DoctorInfoPage = () => {
               </h2>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
+                <div className="space-y-4">
                   <label className="text-sm text-gray-500">Schedule</label>
-                  <p className="text-gray-800 whitespace-pre-line">{doctorInfo.schedule}</p>
+                  <div className="bg-gray-50 rounded-lg p-4 space-y-3">
+                    {scheduleItems.map((schedule, index) => (
+                      <div key={index} className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                        <p className="text-gray-800">{schedule}</p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
                 
                 <div>

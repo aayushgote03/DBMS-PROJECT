@@ -29,7 +29,11 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         }
         else if(loginMethod === "doctorId") {
           query = supabase.from("doctor").select("*").eq("login_id", identifier).maybeSingle();
-        } else {
+        } 
+        else if(loginMethod === "adminId") {
+          query = supabase.from("admin").select("*").eq("admin_login_id", identifier).maybeSingle();
+        }
+        else {
           throw new Error("Invalid login method. Use 'email' or 'mobile'.");
         }
 
