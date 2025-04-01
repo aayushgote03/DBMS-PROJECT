@@ -1,9 +1,9 @@
 'use client'
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { signIn } from "next-auth/react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import LogoutButton from "@/components/Logoutbutton";
+
 
 const LoginPage: React.FC = () => {
   const [loginMethod, setLoginMethod] = useState("email");
@@ -20,6 +20,7 @@ const LoginPage: React.FC = () => {
     try {
       const res = await signIn('credentials', {
         redirect: false,
+        role: 'patient',
         identifier,
         loginMethod,
         password,
