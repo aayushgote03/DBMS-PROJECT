@@ -23,7 +23,8 @@ export default function AddDoctor() {
     password: '',
     schedule: '',
     consult_fees: '',
-    name: ''
+    name: '',
+    login_id: ''
   });
 
   // State for current schedule entry
@@ -75,18 +76,32 @@ export default function AddDoctor() {
     setFormData(prev => ({ ...prev, schedule: newEntries.join(', ') }));
   };
 
+  const generateLoginId = () => {
+    // Generate a random 6-character alphanumeric string
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let result = '';
+    for (let i = 0; i < 6; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     
     try {
+      // Generate login_id before submission
+      const login_id = generateLoginId();
+
       // Convert numeric fields to appropriate types
       const processedData = {
         ...formData,
         age: parseInt(formData.age),
         experience: parseInt(formData.experience),
-        mobile_no: formData.mobile_no, // Keep as string
-        consult_fees: parseInt(formData.consult_fees)
+        mobile_no: formData.mobile_no,
+        consult_fees: parseInt(formData.consult_fees),
+        login_id
       };
       
       const { data, error } = await supabase
@@ -97,7 +112,7 @@ export default function AddDoctor() {
       
       setMessage({ 
         type: 'success', 
-        content: '✅ Doctor added successfully!' 
+        content: `✅ Doctor added successfully! Login ID: ${login_id}` 
       });
       
       // Reset form after successful submission
@@ -111,7 +126,8 @@ export default function AddDoctor() {
         email_id: '',
         password: '',
         schedule: '',
-        consult_fees: ''
+        consult_fees: '',
+        login_id: ''
       });
       
       setScheduleEntries([]);
@@ -158,7 +174,40 @@ export default function AddDoctor() {
               
               {message.content && (
                 <div className={`p-4 rounded-lg ${message.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                  {message.content}
+                  <p className="mb-4">{message.content.split('Login ID:')[0]}</p>
+                  {message.type === 'success' && message.content.includes('Login ID:') && (
+                    <div className="space-y-3">
+                      <div className="bg-white p-4 rounded-lg border-2 border-green-200">
+                        <p className="text-sm text-gray-600 mb-2">Doctor's Login Credentials:</p>
+                        <div className="flex items-center justify-between bg-green-50 p-3 rounded">
+                          <div>
+                            <p className="font-medium">Login ID:</p>
+                            <p className="text-xl font-bold text-green-700">{message.content.split('Login ID: ')[1]}</p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              navigator.clipboard.writeText(message.content.split('Login ID: ')[1]);
+                              alert('Login ID copied to clipboard!');
+                            }}
+                            className="p-2 hover:bg-green-100 rounded-lg transition-colors"
+                            title="Copy Login ID"
+                          >
+                            📋
+                          </button>
+                        </div>
+                      </div>
+                      <div className="bg-yellow-50 p-3 rounded-lg border border-yellow-200">
+                        <div className="flex gap-2 items-start">
+                          <span className="text-yellow-600">⚠️</span>
+                          <div className="text-sm text-yellow-800">
+                            <p className="font-medium">Important:</p>
+                            <p>Please save or share this Login ID with the doctor. It will be required for accessing the system.</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -439,7 +488,8 @@ export default function AddDoctor() {
                       email_id: '',
                       password: '',
                       schedule: '',
-                      consult_fees: ''
+                      consult_fees: '',
+                      login_id: ''
                     });
                     
                     setScheduleEntries([]);
