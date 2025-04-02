@@ -109,8 +109,8 @@ const PatientLayout = ({ children }: { children: React.ReactNode }) => {
               Home
             </Link>
             <Link
-              href="/patient/appointments"
-              className={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${isActive('/patient/appointments')}`}
+              href="/patient/bookappointment"
+              className={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${isActive('/patient/bookappointment')}`}
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Appointments
