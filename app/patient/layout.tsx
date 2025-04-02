@@ -59,6 +59,12 @@ const PatientLayout = ({ children }: { children: React.ReactNode }) => {
                 >
                   view doctors
                 </Link>
+                <Link
+                  href="/patient/editpatientinfo"
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${isActive('/patient/editpatientinfo')}`}
+                >
+                  edit patient info
+                </Link>
               </div>
             </div>
 

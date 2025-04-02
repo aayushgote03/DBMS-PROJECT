@@ -53,6 +53,12 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                 >
                   Profile
                 </Link>
+                <Link
+                  href="/admin/removedoctor"
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${isActive('/admin/removedoctor')}`}
+                >
+                  Remove Doctor
+                </Link>
               </div>
             </div>
 

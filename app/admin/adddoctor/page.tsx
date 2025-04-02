@@ -1,6 +1,6 @@
 // pages/admin/add-doctor.tsx
 "use client"
-import { useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/providers/db';
 
@@ -32,6 +32,7 @@ export default function AddDoctor() {
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
   const [scheduleEntries, setScheduleEntries] = useState<string[]>([]);
+  const [admin_id, setAdmin_id] = useState<string>('');
 
   // Emoji mapping for specializations
   const specializationEmojis: Record<string, string> = {
@@ -49,6 +50,17 @@ export default function AddDoctor() {
     'Urology': '🩺',
     'Other': '🏥'
   };
+
+  useEffect(() => {
+    const unparsed_admin_id = localStorage.getItem('adminInfo');
+    if (unparsed_admin_id) {
+      const admin = JSON.parse(unparsed_admin_id);
+      const admin_id = admin.admin_id;
+
+      setAdmin_id(admin_id);  
+      console.log(admin_id, "im here");
+    }
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -101,7 +113,8 @@ export default function AddDoctor() {
         experience: parseInt(formData.experience),
         mobile_no: formData.mobile_no,
         consult_fees: parseInt(formData.consult_fees),
-        login_id
+        login_id,
+        admin_id
       };
       
       const { data, error } = await supabase

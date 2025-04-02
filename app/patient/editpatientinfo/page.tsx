@@ -1,12 +1,28 @@
 // pages/patient.js
 'use client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { supabase } from '@/providers/db'
 import { useRouter } from 'next/navigation'
+import { Eye, EyeOff } from "lucide-react";
+
+interface Patient {
+  id?: string;
+  p_id?: string;
+  name: string;
+  dob: string;
+  gender: string;
+  blood_group: string;
+  email_id: string;
+  address: string;
+  mobile_no: string;
+  cghs_private: string;
+  password: string;
+  created_at?: string;
+}
 
 export default function AddPatient() {
   const router = useRouter()
-  const [patient, setPatient] = useState({
+  const [patient, setPatient] = useState<Patient>({
     name: '',
     dob: '',
     gender: '',
@@ -16,10 +32,11 @@ export default function AddPatient() {
     mobile_no: '',
     cghs_private: '',
     password: '',
-  })
+  });
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -29,6 +46,16 @@ export default function AddPatient() {
     setError(null)
   }
 
+  useEffect(() => {
+    const unparsed_patient_id = localStorage.getItem('patientInfo');
+    if (unparsed_patient_id) {
+      const parsedPatient = JSON.parse(unparsed_patient_id);
+      console.log(parsedPatient, "im here");
+      setPatient(parsedPatient);
+    }
+  }, []);
+  
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true)
@@ -36,25 +63,29 @@ export default function AddPatient() {
     setSuccess(false)
 
     try {
-      const { data, error } = await supabase.from('patients').insert([patient])
+      const { data, error } = await supabase
+        .from('patients')
+        .update({
+          name: patient.name,
+          dob: patient.dob,
+          gender: patient.gender,
+          blood_group: patient.blood_group,
+          email_id: patient.email_id,
+          address: patient.address,
+          mobile_no: patient.mobile_no,
+          cghs_private: patient.cghs_private,
+          password: patient.password
+        })
+        .eq('p_id', patient.p_id);
+
+        localStorage.setItem("patientInfo", JSON.stringify(patient));
 
       if (error) {
         setError(error.message)
       } else {
         setSuccess(true)
-        setPatient({
-          name: '',
-          dob: '',
-          gender: '',
-          blood_group: '',
-          email_id: '',
-          address: '',
-          mobile_no: '',
-          cghs_private: '',
-          password: '',
-        })
         setTimeout(() => {
-          router.push('/auth/patientlogin')
+          router.push('/patient/patientinfo')
         }, 2000)
       }
     } catch (err) {
@@ -72,7 +103,7 @@ export default function AddPatient() {
             <div className="w-20 h-20 mx-auto bg-blue-100 rounded-full flex items-center justify-center mb-4">
               <span className="text-3xl">🏥</span>
             </div>
-            <h2 className="text-3xl font-bold text-gray-800 mb-2">Patient Registration</h2>
+            <h2 className="text-3xl font-bold text-gray-800 mb-2">Edit Patient Information</h2>
             <p className="text-gray-600">Please fill in your details to create an account</p>
           </div>
 
@@ -97,7 +128,7 @@ export default function AddPatient() {
                 </div>
                 <div className="ml-3">
                   <p className="text-sm text-green-700 font-medium">
-                    Registration successful! Redirecting to login...
+                    Registration successful! Redirecting to your profile...
                   </p>
                 </div>
               </div>
@@ -116,7 +147,7 @@ export default function AddPatient() {
                 type="text"
                 name="name"
                 placeholder="Enter your full name"
-                value={patient.name}
+                value={patient?.name || ''}
                 onChange={handleChange}
                 className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
                 required
@@ -133,7 +164,7 @@ export default function AddPatient() {
               <input
                 type="date"
                 name="dob"
-                value={patient.dob}
+                value={patient?.dob || ''}
                 onChange={handleChange}
                 className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
                 required
@@ -149,7 +180,7 @@ export default function AddPatient() {
               </label>
               <select
                 name="gender"
-                value={patient.gender}
+                value={patient?.gender || ''}
                 onChange={handleChange}
                 className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
                 required
@@ -170,7 +201,7 @@ export default function AddPatient() {
               </label>
               <select
                 name="blood_group"
-                value={patient.blood_group}
+                value={patient?.blood_group || ''}
                 onChange={handleChange}
                 className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
                 required
@@ -198,7 +229,7 @@ export default function AddPatient() {
                 type="email"
                 name="email_id"
                 placeholder="Enter your email"
-                value={patient.email_id}
+                value={patient?.email_id || ''}
                 onChange={handleChange}
                 className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
                 required
@@ -216,7 +247,7 @@ export default function AddPatient() {
                 type="tel"
                 name="mobile_no"
                 placeholder="Enter your mobile number"
-                value={patient.mobile_no}
+                value={patient?.mobile_no || ''}
                 onChange={handleChange}
                 className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
                 required
@@ -234,7 +265,7 @@ export default function AddPatient() {
                 type="text"
                 name="address"
                 placeholder="Enter your address"
-                value={patient.address}
+                value={patient?.address || ''}
                 onChange={handleChange}
                 className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
                 required
@@ -250,7 +281,7 @@ export default function AddPatient() {
               </label>
               <select
                 name="cghs_private"
-                value={patient.cghs_private}
+                value={patient?.cghs_private || ''}
                 onChange={handleChange}
                 className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
                 required
@@ -268,16 +299,25 @@ export default function AddPatient() {
                   Password
                 </span>
               </label>
-              <input
-                type="password"
-                name="password"
-                placeholder="Create a password"
-                value={patient.password}
-                onChange={handleChange}
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-                required
-                minLength={6}
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  placeholder="Create a password"
+                  value={patient?.password || ''}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                  required
+                  minLength={6}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                >
+                  {showPassword ? <EyeOff /> : <Eye />}
+                </button>
+              </div>
             </div>
 
             <div className="md:col-span-2 lg:col-span-3">
@@ -292,10 +332,10 @@ export default function AddPatient() {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    Registering...
+                    Updating...
                   </span>
                 ) : (
-                  "Register Patient"
+                  "Update Information"
                 )}
               </button>
             </div>
