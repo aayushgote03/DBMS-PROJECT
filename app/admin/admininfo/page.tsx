@@ -21,6 +21,16 @@ const AdminInfoPage = () => {
   useEffect(() => {
     const getAdminData = async () => {
       try {
+        // First check localStorage
+        const cachedData = localStorage.getItem('adminInfo');
+        if (cachedData) {
+          const parsedData = JSON.parse(cachedData);
+          console.log(parsedData, "im here");
+          setAdminData(parsedData);
+          setLoading(false);
+          return;
+        }
+
         const response = await fetch('/api/getpatient', {
           method: 'GET',
           headers: {
@@ -30,11 +40,15 @@ const AdminInfoPage = () => {
         const data = await response.json();
         
         if (data.user) {
+          // Save to localStorage
+          localStorage.setItem('adminInfo', JSON.stringify(data.user));
           setAdminData(data.user);
         } else {
+          localStorage.removeItem('adminInfo');
           setError('No admin data found');
         }
       } catch (error) {
+        localStorage.removeItem('adminInfo');
         router.push('/auth/adminlogin');
         setError('Failed to fetch admin data');
         console.error('Error fetching admin data:', error);
@@ -159,7 +173,7 @@ const AdminInfoPage = () => {
                   </div>
                 </div>
               </div>
-              <LogoutButton />
+              <LogoutButton removeitem="adminInfo" />
             </div>
           </div>
         </div>

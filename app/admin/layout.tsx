@@ -77,7 +77,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
 
             {/* Logout Button */}
             <div className="hidden md:flex items-center">
-              <LogoutButton />
+              <LogoutButton removeitem="adminInfo" />
             </div>
           </div>
         </div>
@@ -111,7 +111,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
               Profile
             </Link>
             <div className="px-3 py-2">
-              <LogoutButton />
+              <LogoutButton removeitem="adminInfo" />
             </div>
           </div>
         </div>

@@ -95,6 +95,15 @@ const PatientInfoPage: React.FC = () => {
   useEffect(() => {
     const getPatient = async () => {
       try {
+        // First check localStorage
+        const cachedData = localStorage.getItem('patientInfo');
+        if (cachedData) {
+          const parsedData = JSON.parse(cachedData);
+          setMockPatient(parsedData);
+          setLoading(false);
+          return;
+        }
+
         const response = await fetch('/api/getpatient', {
           method: 'GET',
           headers: {
@@ -106,15 +115,20 @@ const PatientInfoPage: React.FC = () => {
           const data = await response.json();
           const info = data.user;
           if (info) {
-            setLoading(false);
+            // Save to localStorage
+            localStorage.setItem('patientInfo', JSON.stringify(info));
             setMockPatient(info);
+            setLoading(false);
           } else {
+            localStorage.removeItem('patientInfo');
             router.push('/auth/patientlogin');
           }
         } else {
+          localStorage.removeItem('patientInfo');
           router.push('/auth/patientlogin');
         }
       } catch (error) {
+        localStorage.removeItem('patientInfo');
         router.push('/auth/patientlogin');
       }
     };
@@ -165,7 +179,7 @@ const PatientInfoPage: React.FC = () => {
                   <span className="font-medium text-indigo-800">
                     {mockPatient?.cghs_private === 'CGHS' ? '🏥 CGHS Patient' : '🏢 Private Patient'}
                   </span>
-                  <LogoutButton />
+                  <LogoutButton removeitem="patientInfo" />
                 </div>
                 <div className="text-sm text-gray-500 mt-1">
                   ID: {mockPatient?.p_id?.substring(0, 8)}...

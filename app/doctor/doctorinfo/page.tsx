@@ -23,6 +23,16 @@ const DoctorInfoPage = () => {
   useEffect(() => {
     const getDoctorInfo = async () => {
       try {
+        // First check localStorage
+        const cachedData = localStorage.getItem('doctorInfo');
+        if (cachedData) {
+          const parsedData = JSON.parse(cachedData);
+          console.log(parsedData, "im here");
+          setDoctorInfo(parsedData);
+          setLoading(false);
+          return;
+        }
+
         const response = await fetch('/api/getpatient', {
           method: 'GET',
           headers: {
@@ -30,14 +40,24 @@ const DoctorInfoPage = () => {
           },
         });
         
-        if (!response.ok) {
-          throw new Error('Failed to fetch doctor information');
+        if (response.ok) {
+          const data = await response.json();
+          const info = data.user;
+          if (info) {
+            // Save to localStorage
+            localStorage.setItem('doctorInfo', JSON.stringify(info));
+            setDoctorInfo(info);
+            setLoading(false);
+          } else {
+            localStorage.removeItem('doctorInfo');
+            router.push('/auth/doctorlogin');
+          }
+        } else {
+          localStorage.removeItem('doctorInfo');
+          router.push('/auth/doctorlogin');
         }
-
-        const data = await response.json();
-        setDoctorInfo(data.user);
-        setLoading(false);
       } catch (error) {
+        localStorage.removeItem('doctorInfo');
         router.push('/auth/doctorlogin');
       }
     };
@@ -170,7 +190,7 @@ const DoctorInfoPage = () => {
             <p className="text-sm text-gray-500">
               Last updated: {new Date().toLocaleDateString()}
             </p>
-            <LogoutButton />
+            <LogoutButton removeitem="doctorInfo" />
           </div>
         </div>
       </div>

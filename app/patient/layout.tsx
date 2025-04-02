@@ -42,10 +42,10 @@ const PatientLayout = ({ children }: { children: React.ReactNode }) => {
                   Home
                 </Link>
                 <Link
-                  href="/patient/appointments"
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${isActive('/patient/appointments')}`}
+                  href="/patient/bookappointment"
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${isActive('/patient/bookappointment')}`}
                 >
-                  edit data
+                  book appointment
                 </Link>
                 <Link
                   href="/patient/patientinfo"
@@ -83,7 +83,7 @@ const PatientLayout = ({ children }: { children: React.ReactNode }) => {
 
             {/* Logout Button */}
             <div className="hidden md:flex items-center">
-              <LogoutButton />
+              <LogoutButton removeitem="patientInfo" />
             </div>
           </div>
         </div>
@@ -124,7 +124,7 @@ const PatientLayout = ({ children }: { children: React.ReactNode }) => {
               Prescriptions
             </Link>
             <div className="px-3 py-2">
-              <LogoutButton />
+              <LogoutButton removeitem="patientInfo" />
             </div>
           </div>
         </div>
