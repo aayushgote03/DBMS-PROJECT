@@ -83,7 +83,12 @@ const DoctorLayout = ({ children }: { children: React.ReactNode }) => {
 
             {/* Logout Button */}
             <div className="hidden md:flex items-center">
-              <LogoutButton />
+              <LogoutButton removeitem="doctorInfo" />
+            </div>
+
+            {/* Mobile Menu Logout Button */}
+            <div className="md:hidden">
+              <LogoutButton removeitem="doctorInfo" />
             </div>
           </div>
         </div>
@@ -124,7 +129,7 @@ const DoctorLayout = ({ children }: { children: React.ReactNode }) => {
               Prescriptions
             </Link>
             <div className="px-3 py-2">
-              <LogoutButton />
+              <LogoutButton removeitem="doctorInfo" />
             </div>
           </div>
         </div>
