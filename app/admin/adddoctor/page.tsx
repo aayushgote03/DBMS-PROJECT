@@ -1,16 +1,16 @@
 // pages/admin/add-doctor.tsx
 "use client"
-import { use, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+
 import { supabase } from '@/providers/db';
 import { removeSpaces } from '@/lib/removespaces';
-
+import { updateLocationStatus } from '@/lib/updatelocationstatus';  
 // Create Supabase client
 
 const DAYS_OF_WEEK = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
 
 export default function AddDoctor() {
-  const router = useRouter();
+  
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', content: '' });
   
@@ -25,7 +25,8 @@ export default function AddDoctor() {
     schedule: '',
     consult_fees: '',
     name: '',
-    login_id: ''
+    login_id: '',
+    location_id: '',
   });
 
   // State for current schedule entry
@@ -33,8 +34,11 @@ export default function AddDoctor() {
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
   const [scheduleEntries, setScheduleEntries] = useState<string[]>([]);
+  
   const [admin_id, setAdmin_id] = useState<string>('');
-
+  const [dontAllowSubmit, setDontAllowSubmit] = useState<boolean>(false);
+  const [available_rooms, setAvailableRooms] = useState<any[]>([]);
+  const [selected_room_id, setSelectedRoomId] = useState<string>('');
   // Emoji mapping for specializations
   const specializationEmojis: Record<string, string> = {
     'Cardiology': '❤️',
@@ -61,12 +65,58 @@ export default function AddDoctor() {
       setAdmin_id(admin_id);  
       console.log(admin_id, "im here");
     }
+    
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+
+    if(name === 'room_id'){
+      const room_id = value;
+      setFormData(prev => ({ ...prev, location_id: room_id }));
+      console.log(room_id, "im here room id");
+      setSelectedRoomId(room_id);
+    }
+
+    if(name === 'specialization'){
+
+      const get_rooms = async () => {
+        const { data, error } = await supabase
+          .from('location')
+          .select('*')
+          .eq('department', value)
+          .eq('room_type', 'OPD')
+          .eq('alloted', 'NO');
+        return data;
+      }
+
+      const rooms_of_selected_specialization = await get_rooms();
+
+
+      if(rooms_of_selected_specialization){
+        setAvailableRooms(rooms_of_selected_specialization);
+      }
+      console.log(rooms_of_selected_specialization, "im here rooms");
+
+      
+      
+      const doctors_with_selected_specialization = await supabase
+        .from('doctor')
+        .select('*')
+        .eq('specialization', value);
+      if(doctors_with_selected_specialization.data){
+        const no_of_doctors_with_selected_specialization = doctors_with_selected_specialization.data.length;
+        if(no_of_doctors_with_selected_specialization >= 3){
+          alert('Only 3 doctors are allowed for this specialization');
+          setDontAllowSubmit(true);
+          return;
+        }
+      }
+    }
   };
+
+  
 
   const formatTimeWithLeadingZero = (time: string): string => {
     // Check if the time starts with a single digit hour
@@ -138,7 +188,15 @@ export default function AddDoctor() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+
     e.preventDefault();
+    
+    if(dontAllowSubmit){
+      setDontAllowSubmit(false);
+      alert('Only 3 doctors are allowed for this specialization');
+      return;
+    }
+   
     setLoading(true);
     
     try {
@@ -158,9 +216,35 @@ export default function AddDoctor() {
       
       const { data, error } = await supabase
         .from('doctor')
-        .insert([processedData]);
+        .insert([
+          {
+            name: processedData.name,
+            age: processedData.age,
+            gender: processedData.gender,
+            specialization: processedData.specialization,
+            experience: processedData.experience,
+            mobile_no: processedData.mobile_no,
+            email_id: processedData.email_id,
+            password: processedData.password,
+            schedule: processedData.schedule,
+            consult_fees: processedData.consult_fees,
+            login_id: processedData.login_id,
+            location_id: processedData.location_id,
+            admin_id: processedData.admin_id
+          }
+        ]);
         
-      if (error) throw error;
+      if (error) {
+        console.log(error, "im here error");
+        throw error;
+      }
+      else {
+        console.log(data, "im here after data insertion");
+        const location_id = selected_room_id;
+        const updated_location = await updateLocationStatus(location_id);
+        console.log(updated_location, "im here updated location");
+
+      }
       
       setMessage({ 
         type: 'success', 
@@ -168,7 +252,7 @@ export default function AddDoctor() {
       });
       
       // Reset form after successful submission
-      setFormData({
+     /* setFormData({
         name: '',
         age: '',
         gender: '',
@@ -179,8 +263,9 @@ export default function AddDoctor() {
         password: '',
         schedule: '',
         consult_fees: '',
-        login_id: ''
-      });
+        login_id: '',
+        location_id: '',
+      });*/
       
       setScheduleEntries([]);
       
@@ -441,6 +526,28 @@ export default function AddDoctor() {
                     />
                   </div>
                 </div>
+
+                {/* Allot Room */}
+                <div className="form-group">
+                  <label className="block text-gray-700 mb-2" htmlFor="room_id">
+                    🏠 Allot Room
+                  </label>
+                  <select
+                    id="room_id"
+                    name="room_id"
+                    value={selected_room_id}
+                    onChange={handleChange}
+                    required
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="">Select Room</option>
+                    {available_rooms.map((room) => (
+                      <option key={room.location_id} value={room.location_id}>
+                        Room {room.room_no} - {room.room_type}
+                      </option>
+                    ))}
+                  </select>
+                </div>
                 
                 {/* Schedule - Simple Input with Add Button */}
                 <div className="form-group md:col-span-2">
@@ -541,7 +648,8 @@ export default function AddDoctor() {
                       password: '',
                       schedule: '',
                       consult_fees: '',
-                      login_id: ''
+                      login_id: '',
+                      location_id: '',
                     });
                     
                     setScheduleEntries([]);
