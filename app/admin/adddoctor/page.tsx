@@ -3,6 +3,7 @@
 import { use, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/providers/db';
+import { removeSpaces } from '@/lib/removespaces';
 
 // Create Supabase client
 
@@ -67,13 +68,51 @@ export default function AddDoctor() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const formatTimeWithLeadingZero = (time: string): string => {
+    // Check if the time starts with a single digit hour
+    const timeRegex = /^(\d):(.+)$/;
+    const match = time.match(timeRegex);
+    
+    if (match) {
+      // Add leading zero to the hour
+      return `0${match[1]}:${match[2]}`;
+    }
+    
+    return time;
+  };
+
+  const validateAndFormatTime = (time: string): string | null => {
+    // Remove all spaces
+    const cleanTime = removeSpaces(time);
+    
+    // Check if time contains AM or PM (case insensitive)
+    if (!/(am|pm)$/i.test(cleanTime)) {
+      return null;
+    }
+    
+    // Convert am/pm to AM/PM
+    let formattedTime = formatTimeWithLeadingZero(cleanTime);
+    formattedTime = formattedTime.replace(/am$/i, 'AM').replace(/pm$/i, 'PM');
+    
+    return formattedTime;
+  };
+
   const addScheduleEntry = () => {
     if (!startTime || !endTime) {
       alert('Please enter both start and end times');
       return;
     }
 
-    const entry = `${currentDay} - ${startTime} TO ${endTime}`;
+    // Format and validate times
+    const formattedStartTime = validateAndFormatTime(startTime);
+    const formattedEndTime = validateAndFormatTime(endTime);
+
+    if (!formattedStartTime || !formattedEndTime) {
+      alert('Time must include AM or PM');
+      return;
+    }
+
+    const entry = `${currentDay} - ${formattedStartTime} TO ${formattedEndTime}`;
     setScheduleEntries(prev => [...prev, entry]);
     setFormData(prev => ({ ...prev, schedule: [...prev.schedule ? prev.schedule.split(', ') : [], entry].join(', ') }));
     
@@ -431,7 +470,7 @@ export default function AddDoctor() {
                           type="text"
                           value={startTime}
                           onChange={(e) => setStartTime(e.target.value)}
-                          placeholder="e.g., 9:00AM"
+                          placeholder="e.g., 09:00AM"
                           className="w-full p-2 border border-gray-300 rounded-lg"
                         />
                       </div>
@@ -442,7 +481,7 @@ export default function AddDoctor() {
                           type="text"
                           value={endTime}
                           onChange={(e) => setEndTime(e.target.value)}
-                          placeholder="e.g., 5:00PM"
+                          placeholder="e.g., 05:00PM"
                           className="w-full p-2 border border-gray-300 rounded-lg"
                         />
                       </div>

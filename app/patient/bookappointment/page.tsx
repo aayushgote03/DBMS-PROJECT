@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/providers/db'
-
+import { removeSpaces } from '@/lib/removespaces'
 interface Doctor {
   d_id: number;
   name: string;
@@ -32,40 +32,63 @@ const BookAppointmentPage = () => {
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
   const [patient_id, setPatient_id] = useState<Patient | null>(null);
   const [selectedDate, setSelectedDate] = useState<string>('');
+  const [selectedDay, setSelectedDay] = useState<string>('');
   const [selectedTime, setSelectedTime] = useState<string>('');
+  const [startTime, setStartTime] = useState<string>('');
+  const [endTime, setEndTime] = useState<string>('');
+  const [inputTime, setInputTime] = useState<string>('');
   const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>([]);
   const [error, setError] = useState<string>('');
+  const [successMessage, setSuccessMessage] = useState<string>('');
+
+  const daysOfWeek = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];  
   
 
   const parseSchedule = (schedule: string): TimeSlot[] => {
-    return schedule.split(',').map(slot => {
-      const [day, timeRange] = slot.split(' - ');
-      const [startTime, endTime] = timeRange.split(' TO ');
-      return { day, startTime, endTime };
-    });
+    try {
+      return schedule.split(',').map(slot => {
+        const [day, timeRange] = slot.split(' - ');
+        const [startTime, endTime] = timeRange.split(' TO ');
+        return { day, startTime, endTime };
+      });
+    } catch (error) {
+      console.error('Error parsing schedule:', error);
+      return [];
+    }
   };
 
   const generateTimeSlots = (schedule: TimeSlot[]): string[] => {
     const slots: string[] = [];
-    schedule.forEach(slot => {
-      const start = new Date(`2000-01-01 ${slot.startTime}`);
-      const end = new Date(`2000-01-01 ${slot.endTime}`);
-      
-      while (start < end) {
-        slots.push(start.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }));
-        start.setMinutes(start.getMinutes() + 30); // 30-minute intervals
-      }
-    });
+    try {
+      schedule.forEach(slot => {
+        const start = new Date(`2000-01-01T${slot.startTime}`);
+        const end = new Date(`2000-01-01T${slot.endTime}`);
+        
+        while (start < end) {
+          slots.push(start.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }));
+          start.setMinutes(start.getMinutes() + 30); // 30-minute intervals
+        }
+      });
+    } catch (error) {
+      console.error('Error generating time slots:', error);
+    }
     return slots;
   };
 
   useEffect(() => {
     if (selectedDoctor) {
-      const schedule = parseSchedule(selectedDoctor.schedule);
-      const slots = generateTimeSlots(schedule);
-      setAvailableTimeSlots(slots);
+      try {
+        const schedule = parseSchedule(selectedDoctor.schedule);
+        const slots = generateTimeSlots(schedule);
+        setAvailableTimeSlots(slots);
+      } catch (error) {
+        console.error('Error setting available time slots:', error);
+        setAvailableTimeSlots([]);
+      }
     }
   }, [selectedDoctor]);
+
+  
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const date = new Date(e.target.value);
@@ -82,9 +105,86 @@ const BookAppointmentPage = () => {
         return;
       }
     }
-    
+    const date_date = new Date(e.target.value);
+    const day_index = date_date.getDay();
+    console.log(daysOfWeek[day_index], "im here");
+    setSelectedDay(daysOfWeek[day_index]);
     setSelectedDate(e.target.value);
     setError('');
+  };
+
+  const checkTimeAvailability = () => {
+    console.log(selectedDate, "im here selected date");
+    if (!inputTime || !selectedDate || !selectedDoctor) {
+      setError('Please select a date and enter a time');
+      return false;
+    }
+
+    const date = new Date(selectedDate);
+    console.log(date, "im here selected date");
+    
+    
+    // Get the doctor's schedule for the selected day
+    const schedule = parseSchedule(selectedDoctor.schedule);
+    console.log(schedule, "im here");
+
+    let currentDaySchedule = null;
+    for(let i = 0; i < schedule.length; i++) {
+      if(schedule[i].day === selectedDay){
+        console.log(schedule[i].startTime, "im here");
+        console.log(schedule[i].endTime, "im here");
+        setStartTime(schedule[i].startTime);
+        setEndTime(schedule[i].endTime);
+        currentDaySchedule = schedule[i];
+        break;
+      }
+    }
+    
+    if (!currentDaySchedule) {
+      setError(`Doctor is not available on ${selectedDay}`);
+      return false;
+    }
+
+    // Convert input time to 24-hour format for comparison
+    const inputTimeDate = new Date(`${selectedDate}T${inputTime}`);
+    console.log(inputTimeDate, "im here");
+    const startTimeDate = new Date(`${selectedDate}T${currentDaySchedule.startTime}`);
+    console.log(startTimeDate, "im here");
+    const endTimeDate = new Date(`${selectedDate}T${currentDaySchedule.endTime}`);
+
+    const selectedTime = inputTimeDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+    const selectedTimeWithoutSpaces = removeSpaces(selectedTime);
+    console.log(selectedTimeWithoutSpaces, "im here selected time without spaces");
+    
+    console.log(selectedTime, "im here selected time");
+    
+    
+    // Check if input time is within doctor's schedule
+    const currentTime = new Date();
+    console.log(currentTime, "im here current time");
+    console.log(inputTimeDate, "im here input time date");
+
+    if(inputTimeDate < currentTime){
+      console.log(currentTime, "im in if");
+      setError('Time cannot be in the past');
+      return false;
+    }
+
+    if (selectedTimeWithoutSpaces < startTime || selectedTimeWithoutSpaces >= endTime) {
+      setError(`Time must be between ${currentDaySchedule.startTime} and ${currentDaySchedule.endTime} on ${selectedDay}`);
+      return false;
+    }
+
+    // Check if minutes are in 30-minute intervals
+    if (inputTimeDate.getMinutes() % 30 !== 0) {
+      setError('Please select time in 30-minute intervals (e.g., 10:00, 10:30)');
+      return false;
+    }
+
+    // Time is valid
+    setSelectedTime(inputTimeDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }));
+    setError('');
+    return true;
   };
 
   const bookAppointment = async () => {
@@ -112,12 +212,18 @@ const BookAppointmentPage = () => {
       }
       else{
         console.log(data, "im here");
+        setSuccessMessage(`Appointment successfully booked with Dr. ${selectedDoctor?.name} on ${selectedDate} at ${selectedTime}`);
+        setError('');
+        // Reset selection fields after successful booking
+        setSelectedDate('');
+        setSelectedTime('');
+        setInputTime('');
       }
       
-      // Handle success
     } catch (error) {
       console.error('Error booking appointment:', error);
       setError('Failed to book appointment');
+      setSuccessMessage('');
     }
   };
 
@@ -183,6 +289,13 @@ const BookAppointmentPage = () => {
           <h1 className="text-3xl font-bold text-gray-900 mb-4">Book an Appointment</h1>
           <p className="text-gray-600">Select a specialization and choose your preferred doctor</p>
         </div>
+
+        {successMessage && (
+          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6 flex items-center">
+            <span className="mr-2">✅</span>
+            <span>{successMessage}</span>
+          </div>
+        )}
 
         {/* Specialization Selection */}
         <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
@@ -277,18 +390,26 @@ const BookAppointmentPage = () => {
               {selectedDate && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Time</label>
-                  <select
-                    value={selectedTime}
-                    onChange={(e) => setSelectedTime(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  >
-                    <option value="">Select a time</option>
-                    {availableTimeSlots.map((slot) => (
-                      <option key={slot} value={slot}>
-                        {slot}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="flex space-x-2">
+                    <input
+                      type="time"
+                      value={inputTime}
+                      onChange={(e) => setInputTime(e.target.value)}
+                      className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      step="1800" // 30 minutes in seconds
+                    />
+                    <button
+                      onClick={checkTimeAvailability}
+                      className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-200"
+                    >
+                      Check Availability
+                    </button>
+                  </div>
+                  {selectedTime && !error && (
+                    <div className="mt-2 text-green-600 text-sm">
+                      ✓ Time slot available: {selectedTime}
+                    </div>
+                  )}
                 </div>
               )}
               {error && (
@@ -301,7 +422,7 @@ const BookAppointmentPage = () => {
         )}
 
         {/* Update the book appointment button */}
-        {selectedDoctor && selectedDate && selectedTime && (
+        {selectedDoctor && selectedDate && selectedTime && !error && (
           <div className="mt-8 text-center">
             <button
               onClick={bookAppointment}
