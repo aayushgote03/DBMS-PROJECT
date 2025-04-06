@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/providers/db'
 import { removeSpaces } from '@/lib/removespaces'
+import { compareTimes } from '@/lib/comparetimes'
 interface Doctor {
   d_id: number;
   name: string;
@@ -34,8 +35,7 @@ const BookAppointmentPage = () => {
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [selectedDay, setSelectedDay] = useState<string>('');
   const [selectedTime, setSelectedTime] = useState<string>('');
-  const [startTime, setStartTime] = useState<string>('');
-  const [endTime, setEndTime] = useState<string>('');
+  
   const [inputTime, setInputTime] = useState<string>('');
   const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>([]);
   const [error, setError] = useState<string>('');
@@ -129,12 +129,14 @@ const BookAppointmentPage = () => {
     console.log(schedule, "im here");
 
     let currentDaySchedule = null;
+    let startTime = '';
+    let endTime = '';
     for(let i = 0; i < schedule.length; i++) {
       if(schedule[i].day === selectedDay){
         console.log(schedule[i].startTime, "im here");
         console.log(schedule[i].endTime, "im here");
-        setStartTime(schedule[i].startTime);
-        setEndTime(schedule[i].endTime);
+        startTime = schedule[i].startTime;
+        endTime = schedule[i].endTime;
         currentDaySchedule = schedule[i];
         break;
       }
@@ -170,7 +172,11 @@ const BookAppointmentPage = () => {
       return false;
     }
 
-    if (selectedTimeWithoutSpaces < startTime || selectedTimeWithoutSpaces >= endTime) {
+    console.log(selectedTimeWithoutSpaces, "im here selected time without spaces");
+    console.log(startTime, "im here start time");
+    console.log(endTime, "im here end time");
+
+    if (compareTimes(selectedTimeWithoutSpaces, startTime) < 0 || compareTimes(selectedTimeWithoutSpaces, endTime) >= 0) {
       setError(`Time must be between ${currentDaySchedule.startTime} and ${currentDaySchedule.endTime} on ${selectedDay}`);
       return false;
     }

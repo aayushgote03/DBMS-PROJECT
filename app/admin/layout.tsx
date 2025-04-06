@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import LogoutButton from '@/components/Logoutbutton'
@@ -10,6 +10,10 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   const [isDoctorDropdownOpen, setIsDoctorDropdownOpen] = useState(false)
   const [isPharmacistDropdownOpen, setIsPharmacistDropdownOpen] = useState(false)
   const [isLabAssistantDropdownOpen, setIsLabAssistantDropdownOpen] = useState(false)
+  
+  const doctorDropdownRef = useRef<HTMLDivElement>(null)
+  const pharmacistDropdownRef = useRef<HTMLDivElement>(null)
+  const labAssistantDropdownRef = useRef<HTMLDivElement>(null)
 
   const isActive = (path: string) => {
     return pathname === path ? 'bg-blue-700 text-white' : 'text-gray-300 hover:bg-blue-700 hover:text-white'
@@ -21,15 +25,64 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
 
   const toggleDoctorDropdown = () => {
     setIsDoctorDropdownOpen(!isDoctorDropdownOpen)
+    // Close other dropdowns when opening this one
+    if (!isDoctorDropdownOpen) {
+      setIsPharmacistDropdownOpen(false)
+      setIsLabAssistantDropdownOpen(false)
+    }
   }
 
   const togglePharmacistDropdown = () => {
     setIsPharmacistDropdownOpen(!isPharmacistDropdownOpen)
+    // Close other dropdowns when opening this one
+    if (!isPharmacistDropdownOpen) {
+      setIsDoctorDropdownOpen(false)
+      setIsLabAssistantDropdownOpen(false)
+    }
   }
 
   const toggleLabAssistantDropdown = () => {
     setIsLabAssistantDropdownOpen(!isLabAssistantDropdownOpen)
+    // Close other dropdowns when opening this one
+    if (!isLabAssistantDropdownOpen) {
+      setIsDoctorDropdownOpen(false)
+      setIsPharmacistDropdownOpen(false)
+    }
   }
+
+  // Handle clicks outside of dropdowns
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      // Check if click is outside doctor dropdown
+      if (isDoctorDropdownOpen && 
+          doctorDropdownRef.current && 
+          !doctorDropdownRef.current.contains(event.target as Node)) {
+        setIsDoctorDropdownOpen(false)
+      }
+      
+      // Check if click is outside pharmacist dropdown
+      if (isPharmacistDropdownOpen && 
+          pharmacistDropdownRef.current && 
+          !pharmacistDropdownRef.current.contains(event.target as Node)) {
+        setIsPharmacistDropdownOpen(false)
+      }
+      
+      // Check if click is outside lab assistant dropdown
+      if (isLabAssistantDropdownOpen && 
+          labAssistantDropdownRef.current && 
+          !labAssistantDropdownRef.current.contains(event.target as Node)) {
+        setIsLabAssistantDropdownOpen(false)
+      }
+    }
+
+    // Add event listener
+    document.addEventListener('mousedown', handleClickOutside)
+    
+    // Clean up
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isDoctorDropdownOpen, isPharmacistDropdownOpen, isLabAssistantDropdownOpen])
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -58,7 +111,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                 </Link>
                 
                 {/* Doctor Dropdown */}
-                <div className="relative">
+                <div className="relative" ref={doctorDropdownRef}>
                   <button
                     onClick={toggleDoctorDropdown}
                     className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 flex items-center ${
@@ -101,7 +154,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                 </div>
                 
                 {/* Pharmacist Dropdown */}
-                <div className="relative">
+                <div className="relative" ref={pharmacistDropdownRef}>
                   <button
                     onClick={togglePharmacistDropdown}
                     className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 flex items-center ${
@@ -144,7 +197,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                 </div>
                 
                 {/* Lab Assistant Dropdown */}
-                <div className="relative">
+                <div className="relative" ref={labAssistantDropdownRef}>
                   <button
                     onClick={toggleLabAssistantDropdown}
                     className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 flex items-center ${

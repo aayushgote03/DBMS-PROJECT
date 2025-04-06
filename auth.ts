@@ -30,8 +30,17 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         else if(loginMethod === "doctorId") {
           query = supabase.from("doctor").select("*").eq("login_id", identifier).maybeSingle();
         } 
-        else if(loginMethod === "adminId") {
-          query = supabase.from("admin").select("*").eq("admin_login_id", identifier).maybeSingle();
+        else if(loginMethod === "adminId_administrator") {
+            query = supabase.from("admin").select("*").eq("admin_login_id", identifier).maybeSingle();  
+            console.log("im here in administrator");
+        }
+        else if(loginMethod === "adminId_labAssistant") {
+          query = supabase.from("lab_person").select("*").eq("lab_person_login_id", identifier).maybeSingle();
+          console.log("im here in lab assistant");
+        }
+        else if(loginMethod === "adminId_pharmacist") {
+          query = supabase.from("pharmacist").select("*").eq("pharmacist_login_id", identifier).maybeSingle();
+          console.log("im here in pharmacist");
         }
         else {
           throw new Error("Invalid login method. Use 'email' or 'mobile'.");

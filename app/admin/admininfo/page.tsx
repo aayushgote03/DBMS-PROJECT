@@ -10,12 +10,16 @@ interface AdminData {
   gender: string;
   created_at: string;
   admin_login_id: string;
+  pharmacist_login_id: string;
+  lab_person_login_id: string;
+  mobile_no: string;
 }
 
 const AdminInfoPage = () => {
   const [loading, setLoading] = useState(true);
   const [adminData, setAdminData] = useState<AdminData | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [admintype, setAdmintype] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -26,6 +30,16 @@ const AdminInfoPage = () => {
         if (cachedData) {
           const parsedData = JSON.parse(cachedData);
           console.log(parsedData, "im here");
+          if(parsedData.pharmacist_id){
+            setAdmintype("pharmacist");
+          }
+          else if(parsedData.lab_person_id){
+            setAdmintype("lab assistant");
+          }
+          else if(parsedData.admin_id){
+            setAdmintype("administrator");
+          }
+          
           setAdminData(parsedData);
           setLoading(false);
           return;
@@ -38,14 +52,26 @@ const AdminInfoPage = () => {
           },
         });
         const data = await response.json();
+      
         
-        if (data.user) {
+        if (data) {
+          const parsedData = data.user;
+          if(parsedData.pharmacist_id){
+            setAdmintype("pharmacist");
+          }
+          else if(parsedData.lab_person_id){
+            setAdmintype("lab assistant");
+          }
+          else if(parsedData.admin_id){
+            setAdmintype("administrator");
+          }
           // Save to localStorage
           localStorage.setItem('adminInfo', JSON.stringify(data.user));
           setAdminData(data.user);
         } else {
           localStorage.removeItem('adminInfo');
           setError('No admin data found');
+          router.push('/auth/adminlogin');
         }
       } catch (error) {
         localStorage.removeItem('adminInfo');
@@ -104,7 +130,7 @@ const AdminInfoPage = () => {
               </div>
               <div className="ml-4">
                 <h1 className="text-2xl font-bold text-white">{adminData.name}</h1>
-                <p className="text-blue-100">Administrator</p>
+                <p className="text-blue-100">{admintype}</p>
               </div>
             </div>
           </div>
@@ -126,7 +152,7 @@ const AdminInfoPage = () => {
                     </div>
                     <div className="flex items-center">
                       <span className="text-gray-500 w-24">Admin ID:</span>
-                      <span className="font-medium">{adminData.admin_login_id}</span>
+                       <span className="font-medium">{adminData.pharmacist_login_id || adminData.lab_person_login_id || adminData.admin_login_id}</span>
                     </div>
                   </div>
                 </div>
@@ -141,8 +167,8 @@ const AdminInfoPage = () => {
                 <div className="bg-gray-50 rounded-lg p-4">
                   <div className="space-y-3">
                     <div className="flex items-center">
-                      <span className="text-gray-500 w-24">Email:</span>
-                      <span className="font-medium">{adminData.email_id}</span>
+                      <span className="text-gray-500 w-24">{adminData.mobile_no ? "Mobile Number" : "Email"}</span>
+                      <span className="font-medium">{adminData.mobile_no || adminData.email_id}</span>
                     </div>
                     <div className="flex items-center">
                       <span className="text-gray-500 w-24">Address:</span>

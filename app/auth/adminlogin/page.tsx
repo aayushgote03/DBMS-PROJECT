@@ -21,9 +21,9 @@ export default function AdminLogin() {
     
     // Validate admin ID length
     if (name === 'adminId') {
-      if (value.length !== 4) {
-        setAdminIdError('Admin ID must be exactly 4 characters');
-      } else if (!/^[A-Za-z0-9]{4}$/.test(value)) {
+      if (value.length !== 4 && value.length !== 6) {
+        setAdminIdError('Admin ID must be exactly 4 or 6 characters');
+      } else if (!/^[A-Za-z0-9]{4,6}$/.test(value)) {
         setAdminIdError('Admin ID can only contain letters and numbers');
       } else {
         setAdminIdError('');
@@ -49,11 +49,11 @@ export default function AdminLogin() {
   }
     
     // Validate admin ID before submission
-    if (formData.adminId.length !== 4) {
-      setAdminIdError('Admin ID must be exactly 4 characters');
+    if (formData.adminId.length !== 4 && formData.adminId.length !== 6) {
+      setAdminIdError('Admin ID must be exactly 4 or 6 characters');
       return;
     }
-    if (!/^[A-Za-z0-9]{4}$/.test(formData.adminId)) {
+    if (!/^[A-Za-z0-9]{4,6}$/.test(formData.adminId)) {
       setAdminIdError('Admin ID can only contain letters and numbers');
       return;
     }
@@ -65,7 +65,7 @@ export default function AdminLogin() {
       const result = await signIn('credentials', {
         role: 'admin',
         identifier: formData.adminId,
-        loginMethod: 'adminId',
+        loginMethod: `adminId_${formData.adminType}`,
         password: formData.password,
         adminType: formData.adminType,
         redirect: false,
@@ -132,13 +132,13 @@ export default function AdminLogin() {
               value={formData.adminId}
               onChange={handleChange}
               required
-              maxLength={4}
+              maxLength={6}
               minLength={4}
-              pattern="[A-Za-z0-9]{4}"
+              pattern="[A-Za-z0-9]{4,6}"
               className={`w-full p-3 border ${
                 adminIdError ? 'border-red-500' : 'border-gray-300'
               } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
-              placeholder="Enter 4-character admin ID"
+              placeholder="Enter 4 or 6-character admin ID"
             />
             {adminIdError && (
               <p className="text-sm text-red-500 mt-1 flex items-center">
@@ -147,7 +147,7 @@ export default function AdminLogin() {
               </p>
             )}
             <p className="text-sm text-gray-500 mt-1">
-              Must be exactly 4 characters (letters and numbers only)
+              Must be exactly 4 or 6 characters (letters and numbers only)
             </p>
           </div>
 
