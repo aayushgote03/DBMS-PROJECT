@@ -25,6 +25,7 @@ const DoctorInfoPage = () => {
       try {
         // First check localStorage
         const cachedData = localStorage.getItem('doctorInfo');
+        console.log(cachedData, 'cachedData');
         if (cachedData) {
           const parsedData = JSON.parse(cachedData);
           console.log(parsedData, "im here");

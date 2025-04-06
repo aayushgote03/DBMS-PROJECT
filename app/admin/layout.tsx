@@ -7,6 +7,9 @@ import LogoutButton from '@/components/Logoutbutton'
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isDoctorDropdownOpen, setIsDoctorDropdownOpen] = useState(false)
+  const [isPharmacistDropdownOpen, setIsPharmacistDropdownOpen] = useState(false)
+  const [isLabAssistantDropdownOpen, setIsLabAssistantDropdownOpen] = useState(false)
 
   const isActive = (path: string) => {
     return pathname === path ? 'bg-blue-700 text-white' : 'text-gray-300 hover:bg-blue-700 hover:text-white'
@@ -14,6 +17,18 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen)
+  }
+
+  const toggleDoctorDropdown = () => {
+    setIsDoctorDropdownOpen(!isDoctorDropdownOpen)
+  }
+
+  const togglePharmacistDropdown = () => {
+    setIsPharmacistDropdownOpen(!isPharmacistDropdownOpen)
+  }
+
+  const toggleLabAssistantDropdown = () => {
+    setIsLabAssistantDropdownOpen(!isLabAssistantDropdownOpen)
   }
 
   return (
@@ -41,23 +56,141 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                 >
                   Home
                 </Link>
-                <Link
-                  href="/admin/adddoctor"
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${isActive('/admin/adddoctor')}`}
-                >
-                  Add Doctor
-                </Link>
+                
+                {/* Doctor Dropdown */}
+                <div className="relative">
+                  <button
+                    onClick={toggleDoctorDropdown}
+                    className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 flex items-center ${
+                      isActive('/admin/adddoctor') || isActive('/admin/removedoctor') 
+                        ? 'bg-blue-700 text-white' 
+                        : 'text-gray-300 hover:bg-blue-700 hover:text-white'
+                    }`}
+                  >
+                    Doctor
+                    <svg 
+                      className={`ml-1 h-4 w-4 transition-transform ${isDoctorDropdownOpen ? 'transform rotate-180' : ''}`} 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      fill="none" 
+                      viewBox="0 0 24 24" 
+                      stroke="currentColor"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  
+                  {/* Dropdown Menu */}
+                  {isDoctorDropdownOpen && (
+                    <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+                      <div className="py-1">
+                        <Link
+                          href="/admin/adddoctor"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-100"
+                        >
+                          Add Doctor
+                        </Link>
+                        <Link
+                          href="/admin/removedoctor"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-100"
+                        >
+                          Remove Doctor
+                        </Link>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                
+                {/* Pharmacist Dropdown */}
+                <div className="relative">
+                  <button
+                    onClick={togglePharmacistDropdown}
+                    className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 flex items-center ${
+                      isActive('/admin/addpharmasist') || isActive('/admin/removepharmasist') 
+                        ? 'bg-blue-700 text-white' 
+                        : 'text-gray-300 hover:bg-blue-700 hover:text-white'
+                    }`}
+                  >
+                    Pharmacist
+                    <svg 
+                      className={`ml-1 h-4 w-4 transition-transform ${isPharmacistDropdownOpen ? 'transform rotate-180' : ''}`} 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      fill="none" 
+                      viewBox="0 0 24 24" 
+                      stroke="currentColor"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  
+                  {/* Dropdown Menu */}
+                  {isPharmacistDropdownOpen && (
+                    <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+                      <div className="py-1">
+                        <Link
+                          href="/admin/addpharmasist"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-100"
+                        >
+                          Add Pharmacist
+                        </Link>
+                        <Link
+                          href="/admin/removepharmasist"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-100"
+                        >
+                          Remove Pharmacist
+                        </Link>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                
+                {/* Lab Assistant Dropdown */}
+                <div className="relative">
+                  <button
+                    onClick={toggleLabAssistantDropdown}
+                    className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 flex items-center ${
+                      isActive('/admin/addlabassistants') || isActive('/admin/removelabassistant') 
+                        ? 'bg-blue-700 text-white' 
+                        : 'text-gray-300 hover:bg-blue-700 hover:text-white'
+                    }`}
+                  >
+                    Lab Assistant
+                    <svg 
+                      className={`ml-1 h-4 w-4 transition-transform ${isLabAssistantDropdownOpen ? 'transform rotate-180' : ''}`} 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      fill="none" 
+                      viewBox="0 0 24 24" 
+                      stroke="currentColor"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  
+                  {/* Dropdown Menu */}
+                  {isLabAssistantDropdownOpen && (
+                    <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+                      <div className="py-1">
+                        <Link
+                          href="/admin/addlabassistants"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-100"
+                        >
+                          Add Lab Assistant
+                        </Link>
+                        <Link
+                          href="/admin/removelabassistant"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-100"
+                        >
+                          Remove Lab Assistant
+                        </Link>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                
                 <Link
                   href="/admin/admininfo"
                   className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${isActive('/admin/admininfo')}`}
                 >
                   Profile
-                </Link>
-                <Link
-                  href="/admin/removedoctor"
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${isActive('/admin/removedoctor')}`}
-                >
-                  Remove Doctor
                 </Link>
               </div>
             </div>
@@ -102,13 +235,121 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
             >
               Home
             </Link>
-            <Link
-              href="/admin/adddoctor"
-              className={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${isActive('/admin/adddoctor')}`}
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Add Doctor
-            </Link>
+            
+            {/* Doctor Section in Mobile Menu */}
+            <div>
+              <button
+                onClick={toggleDoctorDropdown}
+                className="w-full flex justify-between items-center px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-blue-700 hover:text-white"
+              >
+                Doctor
+                <svg 
+                  className={`ml-1 h-5 w-5 transition-transform ${isDoctorDropdownOpen ? 'transform rotate-180' : ''}`} 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              
+              {isDoctorDropdownOpen && (
+                <div className="pl-4 space-y-1 mt-1">
+                  <Link
+                    href="/admin/adddoctor"
+                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-blue-600 hover:text-white"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Add Doctor
+                  </Link>
+                  <Link
+                    href="/admin/removedoctor"
+                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-blue-600 hover:text-white"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Remove Doctor
+                  </Link>
+                </div>
+              )}
+            </div>
+            
+            {/* Pharmacist Section in Mobile Menu */}
+            <div>
+              <button
+                onClick={togglePharmacistDropdown}
+                className="w-full flex justify-between items-center px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-blue-700 hover:text-white"
+              >
+                Pharmacist
+                <svg 
+                  className={`ml-1 h-5 w-5 transition-transform ${isPharmacistDropdownOpen ? 'transform rotate-180' : ''}`} 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              
+              {isPharmacistDropdownOpen && (
+                <div className="pl-4 space-y-1 mt-1">
+                  <Link
+                    href="/admin/addpharmasist"
+                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-blue-600 hover:text-white"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Add Pharmacist
+                  </Link>
+                  <Link
+                    href="/admin/removepharmasist"
+                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-blue-600 hover:text-white"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Remove Pharmacist
+                  </Link>
+                </div>
+              )}
+            </div>
+            
+            {/* Lab Assistant Section in Mobile Menu */}
+            <div>
+              <button
+                onClick={toggleLabAssistantDropdown}
+                className="w-full flex justify-between items-center px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-blue-700 hover:text-white"
+              >
+                Lab Assistant
+                <svg 
+                  className={`ml-1 h-5 w-5 transition-transform ${isLabAssistantDropdownOpen ? 'transform rotate-180' : ''}`} 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              
+              {isLabAssistantDropdownOpen && (
+                <div className="pl-4 space-y-1 mt-1">
+                  <Link
+                    href="/admin/addlabassistants"
+                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-blue-600 hover:text-white"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Add Lab Assistant
+                  </Link>
+                  <Link
+                    href="/admin/removelabassistant"
+                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-blue-600 hover:text-white"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Remove Lab Assistant
+                  </Link>
+                </div>
+              )}
+            </div>
+            
             <Link
               href="/admin/admininfo"
               className={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${isActive('/admin/admininfo')}`}

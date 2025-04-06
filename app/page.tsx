@@ -1,7 +1,25 @@
 "use client"
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
+  const [adminInfo, setAdminInfo] = useState<any>(null);
+  const [patientInfo, setPatientInfo] = useState<any>(null);
+  const [doctorInfo, setDoctorInfo] = useState<any>(null);
+  useEffect(() => {
+    const adminInfo = localStorage.getItem('adminInfo');
+    if (adminInfo) {
+      setAdminInfo(JSON.parse(adminInfo));
+    }
+    const patientInfo = localStorage.getItem('patientInfo');
+    if (patientInfo) {
+      setPatientInfo(JSON.parse(patientInfo));
+    }
+    const doctorInfo = localStorage.getItem('doctorInfo');
+    if (doctorInfo) {
+      setDoctorInfo(JSON.parse(doctorInfo));
+    }
+  }, []);
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
       {/* Hero Section */}
@@ -23,7 +41,7 @@ export default function Home() {
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {/* Patient Login */}
-          <Link href="/auth/patientlogin" className="group">
+          <Link href={patientInfo ? "/patient/patientinfo" : "/auth/patientlogin"} className="group">
             <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-2 border-blue-100 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-24 h-24 bg-blue-100 rounded-full transform translate-x-12 -translate-y-12 opacity-20 group-hover:scale-150 transition-transform duration-500"></div>
               <div className="relative">
@@ -31,7 +49,7 @@ export default function Home() {
                   👤
                 </div>
                 <h2 className="text-2xl font-semibold text-blue-800 mb-3">
-                  Patient Login
+                  {patientInfo ? "My patient portal" : "Patient Login"}
                 </h2>
                 <p className="text-gray-600">
                   Access your medical records, appointments, and health information
@@ -41,7 +59,7 @@ export default function Home() {
           </Link>
 
           {/* Doctor Login */}
-          <Link href="/auth/doctorlogin" className="group">
+          <Link href={doctorInfo ? "/doctor/doctorinfo" : "/auth/doctorlogin"} className="group">
             <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-2 border-green-100 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-24 h-24 bg-green-100 rounded-full transform translate-x-12 -translate-y-12 opacity-20 group-hover:scale-150 transition-transform duration-500"></div>
               <div className="relative">
@@ -49,7 +67,7 @@ export default function Home() {
                   👨‍⚕️
                 </div>
                 <h2 className="text-2xl font-semibold text-green-800 mb-3">
-                  Doctor Login
+                    {doctorInfo ? "My doctor portal" : "Doctor Login"}
                 </h2>
                 <p className="text-gray-600">
                   Manage your practice, appointments, and patient records
@@ -59,7 +77,7 @@ export default function Home() {
           </Link>
 
           {/* Admin Login */}
-          <Link href="/auth/adminlogin" className="group">
+          <Link href={adminInfo ? "/admin/admininfo" : "/auth/adminlogin"} className="group">
             <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-2 border-purple-100 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-24 h-24 bg-purple-100 rounded-full transform translate-x-12 -translate-y-12 opacity-20 group-hover:scale-150 transition-transform duration-500"></div>
               <div className="relative">
@@ -67,7 +85,7 @@ export default function Home() {
                   👨‍💼
                 </div>
                 <h2 className="text-2xl font-semibold text-purple-800 mb-3">
-                  Admin Login
+                  {adminInfo ? "My admin portal" :  "Admin Login"}
                 </h2>
                 <p className="text-gray-600">
                   System administration and healthcare facility management
@@ -77,7 +95,7 @@ export default function Home() {
           </Link>
 
           {/* Patient Registration */}
-          <Link href="/patientform" className="group">
+          <Link href={patientInfo ? "/patient/patientinfo" : "/patientform"} className="group">
             <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-2 border-pink-100 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-24 h-24 bg-pink-100 rounded-full transform translate-x-12 -translate-y-12 opacity-20 group-hover:scale-150 transition-transform duration-500"></div>
               <div className="relative">

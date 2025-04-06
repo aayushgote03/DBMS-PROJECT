@@ -2,9 +2,11 @@
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function DoctorLogin() {
   const router = useRouter();
+  const [loginId, setLoginId] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({
@@ -15,10 +17,29 @@ export default function DoctorLogin() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    if(name === 'doctorId') {
+      setLoginId(value);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const doctorInfo = localStorage.getItem('doctorInfo');
+    const parsedDoctorInfo = JSON.parse(doctorInfo || '{}');
+    console.log(parsedDoctorInfo, 'parsedDoctorInfo');
+    console.log(parsedDoctorInfo.doctor_login_id, loginId, 'parsedDoctorInfo');
+    if (doctorInfo) {
+      if(parsedDoctorInfo.login_id === loginId) {
+        alert('Doctor already logged in');
+        router.push('/doctor/doctorinfo');
+        return;
+      }
+      else {
+        alert("One account already in use");
+        return;
+      }
+    }
+    
     setLoading(true);
     setError('');
 
@@ -123,6 +144,12 @@ export default function DoctorLogin() {
             )}
           </button>
         </form>
+        
+        <div className="mt-6 text-center">
+          <Link href="/" className="text-green-600 hover:text-green-800 transition-colors">
+            ← Back to Home
+          </Link>
+        </div>
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -11,9 +11,33 @@ const LoginPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const [loginId, setLoginId] = useState('');
+
+  useEffect(() => {
+    if (loginMethod === 'email') {
+      setLoginId(identifier);
+    } else {
+      setLoginId(identifier);
+    }
+  }, [identifier, loginMethod]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const patientInfo = localStorage.getItem('patientInfo');
+    const parsedPatientInfo = JSON.parse(patientInfo || '{}');
+    console.log(parsedPatientInfo, 'parsedPatientInfo');
+    
+    if (patientInfo) {
+      if (parsedPatientInfo.email_id === identifier || parsedPatientInfo.phone === identifier) {
+        alert('Patient already logged in');
+        router.push('/patient/patientinfo');
+        return;
+      } else {
+        alert("One account already in use");
+        return;
+      }
+    }
+    
     setIsLoading(true);
     setError(null);
 

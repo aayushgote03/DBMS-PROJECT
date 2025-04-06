@@ -65,6 +65,13 @@ const PatientLayout = ({ children }: { children: React.ReactNode }) => {
                 >
                   edit patient info
                 </Link>
+                <Link
+              href="/patient/myappointments"
+              className={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${isActive('/patient/myappointments')}`}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              My Appointments
+            </Link>
               </div>
             </div>
 
@@ -128,6 +135,14 @@ const PatientLayout = ({ children }: { children: React.ReactNode }) => {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Prescriptions
+            </Link>
+
+            <Link
+              href="/patient/myappointments"
+              className={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${isActive('/patient/myappointments')}`}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              My Appointments
             </Link>
             <div className="px-3 py-2">
               <LogoutButton removeitem="patientInfo" />

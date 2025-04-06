@@ -117,6 +117,7 @@ const PatientInfoPage: React.FC = () => {
           if (info) {
             // Save to localStorage
             localStorage.setItem('patientInfo', JSON.stringify(info));
+            console.log(localStorage.getItem('patientInfo'), 'info');
             setMockPatient(info);
             setLoading(false);
           } else {

@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function AdminLogin() {
   const router = useRouter();
@@ -9,11 +10,12 @@ export default function AdminLogin() {
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     adminId: '',
-    password: ''
+    password: '',
+    adminType: 'administrator' // Default admin type
   });
   const [adminIdError, setAdminIdError] = useState('');
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     
@@ -31,6 +33,20 @@ export default function AdminLogin() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const adminInfo = localStorage.getItem('adminInfo');
+    const parsedAdminInfo = JSON.parse(adminInfo || '{}');
+    console.log(parsedAdminInfo.admin_login_id, formData.adminId, 'parsedAdminInfo');
+    if (adminInfo) {
+      if(parsedAdminInfo.admin_login_id === formData.adminId) {
+      alert('Admin already logged in');
+      router.push('/admin/admininfo');
+      return;
+    }
+    else {
+      alert("one account already in use");
+      return;
+    }
+  }
     
     // Validate admin ID before submission
     if (formData.adminId.length !== 4) {
@@ -51,6 +67,7 @@ export default function AdminLogin() {
         identifier: formData.adminId,
         loginMethod: 'adminId',
         password: formData.password,
+        adminType: formData.adminType,
         redirect: false,
       });
 
@@ -85,6 +102,24 @@ export default function AdminLogin() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Admin Type */}
+          <div>
+            <label className="block text-gray-700 mb-2" htmlFor="adminType">
+              👤 Admin Type
+            </label>
+            <select
+              id="adminType"
+              name="adminType"
+              value={formData.adminType}
+              onChange={handleChange}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="administrator">Administrator</option>
+              <option value="labAssistant">Lab Assistant</option>
+              <option value="pharmacist">Pharmacist</option>
+            </select>
+          </div>
+
           {/* Admin ID */}
           <div>
             <label className="block text-gray-700 mb-2" htmlFor="adminId">
@@ -158,6 +193,12 @@ export default function AdminLogin() {
             )}
           </button>
         </form>
+        
+        <div className="mt-6 text-center">
+          <Link href="/" className="text-blue-600 hover:text-blue-800 transition-colors">
+            ← Back to Home
+          </Link>
+        </div>
       </div>
     </div>
   );
