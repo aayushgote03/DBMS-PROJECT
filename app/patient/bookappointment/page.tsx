@@ -1,9 +1,9 @@
 "use client"
 import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { supabase } from '@/providers/db'
 import { removeSpaces } from '@/lib/removespaces'
 import { compareTimes } from '@/lib/comparetimes'
+import { checkIfAvailableInTimeSlot } from '@/lib/checkifavailableintimeslot'
 interface Doctor {
   d_id: number;
   name: string;
@@ -35,11 +35,13 @@ const BookAppointmentPage = () => {
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [selectedDay, setSelectedDay] = useState<string>('');
   const [selectedTime, setSelectedTime] = useState<string>('');
-  
+  const [slots_booked_error, setSlots_booked_error] = useState<string>('');
   const [inputTime, setInputTime] = useState<string>('');
   const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>([]);
   const [error, setError] = useState<string>('');
+
   const [successMessage, setSuccessMessage] = useState<string>('');
+  const [showViewAppointments, setShowViewAppointments] = useState<boolean>(false);
 
   const daysOfWeek = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];  
   
@@ -113,7 +115,8 @@ const BookAppointmentPage = () => {
     setError('');
   };
 
-  const checkTimeAvailability = () => {
+  const checkTimeAvailability = async () => {
+    setSlots_booked_error('');
     console.log(selectedDate, "im here selected date");
     if (!inputTime || !selectedDate || !selectedDoctor) {
       setError('Please select a date and enter a time');
@@ -190,7 +193,19 @@ const BookAppointmentPage = () => {
     // Time is valid
     setSelectedTime(inputTimeDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }));
     setError('');
+
+    const no_of_bookings_in_selected_time_slot = await checkIfAvailableInTimeSlot(selectedDoctor?.d_id?.toString() || '', selectedDate, selectedTime);
+
+    if(no_of_bookings_in_selected_time_slot) {
+      if(no_of_bookings_in_selected_time_slot >= 3){
+        setError('Time slot is fully booked');
+        setSlots_booked_error('Time slot is fully booked');
+        console.log("im here, IN");
+        return false;
+      }
+    } 
     return true;
+
   };
 
   const bookAppointment = async () => {
@@ -205,7 +220,14 @@ const BookAppointmentPage = () => {
         date: selectedDate,
         time: selectedTime,
         d_id: selectedDoctor?.d_id,
-      });
+      }).select()
+      .single();
+
+      const no_of_bookings_in_selected_time_slot = await checkIfAvailableInTimeSlot(selectedDoctor?.d_id?.toString() || '', selectedDate, selectedTime);
+
+      console.log(no_of_bookings_in_selected_time_slot, "im here no of bookings in selected time slot");
+
+      console.log(data, "im here inserted appointment");
       
       if (error){
         if (error.code === '23505'){
@@ -217,7 +239,17 @@ const BookAppointmentPage = () => {
         }
       }
       else{
-        console.log(data, "im here");
+         const {data: data1, error: error1} = await supabase.from('bill').insert({
+          appointment_id: data.appointment_id,
+          consult_fees: {amount: selectedDoctor?.consult_fees, status: 'unpaid'},
+         }).select().single();
+
+         if(!error1) {
+           setShowViewAppointments(true);
+         }
+
+         console.log(data, "im here inserted appointment");
+         console.log(data1, "im here inserted bill");
         setSuccessMessage(`Appointment successfully booked with Dr. ${selectedDoctor?.name} on ${selectedDate} at ${selectedTime}`);
         setError('');
         // Reset selection fields after successful booking
@@ -300,6 +332,20 @@ const BookAppointmentPage = () => {
           <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6 flex items-center">
             <span className="mr-2">✅</span>
             <span>{successMessage}</span>
+          </div>
+        )}
+
+        {showViewAppointments && (
+          <div className="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded-lg mb-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <span className="mr-2">ℹ️</span>
+                <span>Please go to My Appointments page to view and manage your appointments.</span>
+              </div>
+              <a href="/patient/myappointments" className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                View Appointments
+              </a>
+            </div>
           </div>
         )}
 
@@ -411,7 +457,7 @@ const BookAppointmentPage = () => {
                       Check Availability
                     </button>
                   </div>
-                  {selectedTime && !error && (
+                  {!slots_booked_error && selectedTime && !error && (
                     <div className="mt-2 text-green-600 text-sm">
                       ✓ Time slot available: {selectedTime}
                     </div>
@@ -428,7 +474,7 @@ const BookAppointmentPage = () => {
         )}
 
         {/* Update the book appointment button */}
-        {selectedDoctor && selectedDate && selectedTime && !error && (
+        {!slots_booked_error && selectedDoctor && selectedDate && selectedTime && !error && (
           <div className="mt-8 text-center">
             <button
               onClick={bookAppointment}

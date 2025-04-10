@@ -1,22 +1,41 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import { supabase } from '@/providers/db';
+import Link from 'next/link';
+
 
 // 📋 Define appointment data structure
 interface Appointment {
+  appointment_id: string;
   date: string;
   time: string;
   doctor: {
     name: string;
     specialization: string;
   };
+  bill: {
+    appointment_id: string;
+    consult_fees: {
+      status: string;
+    };
+  };
+}
+
+interface Bill {
+  bill_id: string;
+  appointment_id: string;
+  amount: number;
+  status: string;
 }
 
 const MyAppointments = () => {
   // 🎯 State management
   const [appointments, setAppointments] = useState<Appointment[]>([]);
+  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  
 
   // 🔄 Fetch appointments on component mount
   useEffect(() => {
@@ -33,15 +52,21 @@ const MyAppointments = () => {
         // 📥 Fetch appointments from database
         const { data: appointmentsData, error: appointmentsError } = await supabase
           .from('appointment')
-          .select('date, time, doctor(name, specialization)')
+          .select('date, time, doctor(name, specialization), bill(appointment_id, consult_fees)')
           .eq('p_id', patientInfo.p_id);
+        
+        console.log(appointmentsData, "appointmentsData from supabase");
 
         if (appointmentsError) throw appointmentsError;
+
+       
         
         console.log('📅 Appointments:', appointmentsData);
         if (appointmentsData) { 
           setAppointments(appointmentsData as unknown as Appointment[]);
         }
+        
+
       } catch (err) {
         setError(err instanceof Error ? err.message : '❌ Failed to load appointments');
       } finally {
@@ -121,6 +146,13 @@ const MyAppointments = () => {
                       <span className="ml-2">{appointment.time}</span>
                     </p>
                   </div>
+                  {appointment.bill.consult_fees.status === 'unpaid' ? (
+                    <Link href={`/feepayment?appointment_id=${appointment.bill.appointment_id}`} className='text-blue-500'>Pay Now</Link>
+                  ) : (
+                    <div className='text-blue-500'>
+                      Paid
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

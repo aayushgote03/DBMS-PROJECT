@@ -615,7 +615,7 @@ export default function AddDoctor() {
                                 onClick={() => removeScheduleEntry(index)}
                                 className="text-red-500 hover:text-red-700"
                               >
-                                ❌
+                                Remove
                               </button>
                             </li>
                           ))}

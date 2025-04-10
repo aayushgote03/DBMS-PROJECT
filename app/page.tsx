@@ -95,7 +95,7 @@ export default function Home() {
           </Link>
 
           {/* Patient Registration */}
-          <Link href={patientInfo ? "/patient/patientinfo" : "/patientform"} className="group">
+          <Link href={"/patientform"} className="group">
             <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-2 border-pink-100 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-24 h-24 bg-pink-100 rounded-full transform translate-x-12 -translate-y-12 opacity-20 group-hover:scale-150 transition-transform duration-500"></div>
               <div className="relative">
