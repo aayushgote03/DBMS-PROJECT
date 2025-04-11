@@ -147,7 +147,7 @@ const MyAppointments = () => {
                     </p>
                   </div>
                   {appointment.bill.consult_fees.status === 'unpaid' ? (
-                    <Link href={`/feepayment?appointment_id=${appointment.bill.appointment_id}`} className='text-blue-500'>Pay Now</Link>
+                    <Link href={`/feepayment?appointment_id=${appointment.bill.appointment_id}`} className='text-blue-500'>Pay Now {appointment.bill.consult_fees.status}</Link>
                   ) : (
                     <div className='text-blue-500'>
                       Paid

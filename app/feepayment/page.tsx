@@ -1,9 +1,10 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation';
 import { supabase } from '@/providers/db';
 
-const FeePayment = () => {
+// Wrapper component to handle the search params
+function FeePaymentContent() {
   const [paymentInfo, setPaymentInfo] = useState({
     cardNumber: '',
     cardholderName: '',
@@ -72,6 +73,8 @@ const FeePayment = () => {
         }
 
     }).eq('appointment_id', appointment_id).select();
+
+    console.log(data, "im here data");
 
 
     // Simulate payment processing
@@ -176,6 +179,15 @@ const FeePayment = () => {
         </div>
       )}
     </div>
+  )
+}
+
+// Main component with Suspense boundary
+const FeePayment = () => {
+  return (
+    <Suspense fallback={<div className="p-8 text-center">Loading payment details...</div>}>
+      <FeePaymentContent />
+    </Suspense>
   )
 }
 

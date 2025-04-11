@@ -117,6 +117,8 @@ const BookAppointmentPage = () => {
 
   const checkTimeAvailability = async () => {
     setSlots_booked_error('');
+    setError('');
+
     console.log(selectedDate, "im here selected date");
     if (!inputTime || !selectedDate || !selectedDoctor) {
       setError('Please select a date and enter a time');

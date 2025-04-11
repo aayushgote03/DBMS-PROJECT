@@ -1,8 +1,13 @@
-import { type NextRequest } from "next/server";
-import { updateSession } from "@/utils/supabase/middleware";
+import { NextResponse, type NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
-  return await updateSession(request);
+
+  console.log(request.nextUrl);
+    const res = NextResponse.next();
+    res.headers.append('ACCESS-CONTROL-ALLOW-ORIGIN', '*');
+    res.headers.append('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    return res; 
+  
 }
 
 export const config = {
