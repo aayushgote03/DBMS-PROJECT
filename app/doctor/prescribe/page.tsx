@@ -19,6 +19,7 @@ interface Prescription {
     name: string;
     description: string;
   }>;
+  created_at: string;
 }
 
 // Component that uses searchParams
@@ -152,7 +153,8 @@ function PrescribeContent() {
           comments: med.comments,
           duration: med.duration
         })),
-        Tests: tests
+        Tests: tests,
+        created_at: new Date().toISOString()
       };
       
       const { data, error } = await supabase
@@ -209,7 +211,6 @@ function PrescribeContent() {
               value={diagnosis}
               onChange={(e) => setDiagnosis(e.target.value)}
               placeholder="Enter your diagnosis here..."
-              required
             />
           </div>
           
@@ -252,7 +253,6 @@ function PrescribeContent() {
                       value={med.name}
                       onChange={(e) => handleMedicationChange(index, 'name', e.target.value)}
                       placeholder="e.g., Paracetamol"
-                      required
                     />
                   </div>
                   <div>
@@ -265,7 +265,6 @@ function PrescribeContent() {
                       value={med.dosage}
                       onChange={(e) => handleMedicationChange(index, 'dosage', e.target.value)}
                       placeholder="e.g., 500mg twice daily"
-                      required
                     />
                   </div>
                 </div>
@@ -280,7 +279,6 @@ function PrescribeContent() {
                       value={med.comments}
                       onChange={(e) => handleMedicationChange(index, 'comments', e.target.value)}
                       placeholder="e.g., Take after meals"
-                      required
                     />
                   </div>
                   <div>
@@ -293,7 +291,6 @@ function PrescribeContent() {
                       value={med.duration}
                       onChange={(e) => handleMedicationChange(index, 'duration', e.target.value)}
                       placeholder="e.g., 7 days"
-                      required
                     />
                   </div>
                 </div>
@@ -339,7 +336,6 @@ function PrescribeContent() {
                     value={test.name}
                     onChange={(e) => handleTestChange(index, 'name', e.target.value)}
                     placeholder="e.g., Blood Test"
-                    required
                   />
                 </div>
                 <div>

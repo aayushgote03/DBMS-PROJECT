@@ -29,7 +29,7 @@ const AdminInfoPage = () => {
         const cachedData = localStorage.getItem('adminInfo');
         if (cachedData) {
           const parsedData = JSON.parse(cachedData);
-          console.log(parsedData, "im here");
+          console.log(parsedData, "im here admin info");
           if(parsedData.pharmacist_id){
             setAdmintype("pharmacist");
           }

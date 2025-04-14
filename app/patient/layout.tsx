@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import LogoutButton from '@/components/Logoutbutton'
@@ -7,6 +7,17 @@ import LogoutButton from '@/components/Logoutbutton'
 const PatientLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [patientInfo, setPatientInfo] = useState<any>(null)
+
+  useEffect(() => {
+    
+    const patientInfo = localStorage.getItem("patientInfo")
+
+    setPatientInfo(patientInfo)
+
+   
+    console.log(patientInfo, "patientInfo")
+  }, [])
 
   const isActive = (path: string) => {
     return pathname === path ? 'bg-purple-700 text-white' : 'text-gray-300 hover:bg-purple-700 hover:text-white'
@@ -28,7 +39,7 @@ const PatientLayout = ({ children }: { children: React.ReactNode }) => {
                 <span className="text-2xl">👤</span>
               </div>
               <div className="ml-3">
-                <span className="text-white font-semibold text-xl">Patient Portal</span>
+                <span className="text-white font-semibold text-xl">Patient Portal </span>
               </div>
             </div>
 

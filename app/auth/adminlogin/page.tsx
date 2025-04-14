@@ -77,6 +77,20 @@ export default function AdminLogin() {
         return;
       }
       else {
+        try {
+          const response = await fetch('/api/getpatient', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+          const data = await response.json();
+          console.log(data, "data");
+          localStorage.setItem('adminInfo', JSON.stringify(data.user));
+        } catch (error) {
+          console.log(error, "error");
+        }
+        
         router.push('/admin/admininfo');
         console.log(result);
       }

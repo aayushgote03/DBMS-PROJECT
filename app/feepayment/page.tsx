@@ -66,16 +66,39 @@ function FeePaymentContent() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const {data, error} = await supabase.from('bill').update({
-        consult_fees: {
-            amount: paymentamount,
-            status: 'paid'
-        }
+    // First delete the existing bill
+    const { error: deleteError } = await supabase
+      .from('bill')
+      .delete()
+      .eq('appointment_id', appointment_id);
 
-    }).eq('appointment_id', appointment_id).select();
+    console.log(deleteError, "im here deleteError");
+    
+    if (deleteError) {
+      console.error("Error deleting bill:", deleteError);
+      return;
+    }
+
+    // Then insert a new bill with updated information
+    const { data, error: insertError } = await supabase
+      .from('bill')
+      .insert({
+        appointment_id: appointment_id,
+        consult_fees: {
+          amount: paymentamount,
+          status: 'paid'
+        }
+      })
+      .select();
 
     console.log(data, "im here data");
 
+    if (insertError) {
+      console.error("Error inserting bill:", insertError);
+      return;
+    }
+
+    console.log(data, "im here data");
 
     // Simulate payment processing
     setTimeout(() => {

@@ -19,6 +19,7 @@ interface Appointment {
       status: string;
     };
   };
+  attended_flag: boolean;
 }
 
 interface Bill {
@@ -34,6 +35,7 @@ const MyAppointments = () => {
   
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  
 
   
 
@@ -52,7 +54,7 @@ const MyAppointments = () => {
         // 📥 Fetch appointments from database
         const { data: appointmentsData, error: appointmentsError } = await supabase
           .from('appointment')
-          .select('date, time, doctor(name, specialization), bill(appointment_id, consult_fees)')
+          .select('appointment_id, date, time, doctor(name, specialization), bill(appointment_id, consult_fees), attended_flag')
           .eq('p_id', patientInfo.p_id);
         
         console.log(appointmentsData, "appointmentsData from supabase");
@@ -147,13 +149,18 @@ const MyAppointments = () => {
                     </p>
                   </div>
                   {appointment.bill.consult_fees.status === 'unpaid' ? (
-                    <Link href={`/feepayment?appointment_id=${appointment.bill.appointment_id}`} className='text-blue-500'>Pay Now {appointment.bill.consult_fees.status}</Link>
+                    <Link href={`/feepayment?appointment_id=${appointment.bill.appointment_id}`} className='text-blue-500'>Pay Now </Link>
                   ) : (
                     <div className='text-blue-500'>
                       Paid
                     </div>
                   )}
                 </div>
+                  {appointment.attended_flag === true && (
+                  <div className='text-blue-500'>
+                    <Link href={`/patient/viewprescription?appointment_id=${appointment.appointment_id}`}>view prescription</Link>
+                  </div>
+                )}
               </div>
             </div>
           ))}

@@ -63,20 +63,23 @@ export default function AddPatient() {
     setSuccess(false)
 
     try {
-      const { data, error } = await supabase
-        .from('patients')
-        .update({
-          name: patient.name,
-          dob: patient.dob,
-          gender: patient.gender,
-          blood_group: patient.blood_group,
-          email_id: patient.email_id,
-          address: patient.address,
-          mobile_no: patient.mobile_no,
-          cghs_private: patient.cghs_private,
-          password: patient.password
-        })
-        .eq('p_id', patient.p_id);
+      const { error } = await supabase.rpc('update_patient', {
+  p_p_id: patient.p_id,
+  p_name: patient.name,
+  p_dob: patient.dob,
+  p_gender: patient.gender,
+  p_blood_group: patient.blood_group,
+  p_email_id: patient.email_id,
+  p_address: patient.address,
+  p_mobile_no: patient.mobile_no,
+  p_cghs_private: patient.cghs_private,
+  p_password: patient.password,
+});
+
+if (error) {
+  console.error('Update failed:', error.message);
+}
+
 
         localStorage.setItem("patientInfo", JSON.stringify(patient));
 
