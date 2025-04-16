@@ -1,85 +1,83 @@
 # Hospital Management System
 
-![Hospital Management System](https://placeholder.com/wp-content/uploads/2018/10/placeholder.png)
+![Hospital Management System](https://img.shields.io/badge/Status-Live-brightgreen)
+![Version](https://img.shields.io/badge/Version-1.0.0-blue)
+![Next.js](https://img.shields.io/badge/Next.js-14.0-black)
+![Supabase](https://img.shields.io/badge/Supabase-2.0-darkgreen)
+![NextAuth.js](https://img.shields.io/badge/NextAuth.js-4.0-orange)
 
-## 🏥 Overview
+## 🏥 Live Demo
 
-The Hospital Management System is a comprehensive web application built to streamline hospital operations, enhance patient experience, and improve healthcare service delivery. This full-stack solution combines modern web technologies with a role-based access system to create an ERP-like platform that serves all stakeholders in a healthcare environment.
+Visit the live application: [Hospital Management System](https://dbms-project-hospital-mangement.vercel.app/)
+
+## 📋 Overview
+
+This Hospital Management System is a comprehensive web application built with Next.js, Supabase, and NextAuth.js for authentication. Designed to streamline hospital operations and improve patient care, the system features role-based access control, appointment scheduling, electronic medical records, billing management, and more. Developed using the Cursor AI editor and deployed on Vercel, this application provides a modern solution for healthcare facilities.
 
 ## ✨ Key Features
 
-- **Multi-role Authentication System** - Specialized interfaces and permissions for:
-  - Patients
-  - Doctors
-  - Laboratory Technicians
-  - Pharmacists
-  - Administrative Staff
+### 🔐 Role-Based Access Control
+The system implements an ERP-like structure where users log in according to their role in the hospital:
+- **Patients**: Book appointments, view medical history, make payments
+- **Doctors**: Manage appointments, update patient records, prescribe medications
+- **Lab Assistants**: Process lab tests, upload results
+- **Pharmacists**: Manage medication inventory, process prescriptions
+- **Administrators**: Oversee all hospital operations, manage staff, access reports
 
-- **Appointment Management**
-  - Online booking system
-  - Real-time availability checking
-  - Automated reminders
-  - Rescheduling options
+### 📅 Appointment Management
+- Easy appointment booking interface
+- Real-time availability checking
+- Automated notifications and reminders
+- Rescheduling and cancellation options
 
-- **Patient Portal**
-  - Medical history records
-  - Prescription access
-  - Lab result viewing
-  - Appointment tracking
+### 📋 Patient Records
+- Comprehensive electronic medical records
+- Medical history tracking
+- Prescription management
+- Test results storage and retrieval
 
-- **Laboratory Management**
-  - Test ordering system
-  - Result publishing
-  - Specimen tracking
-  - Reporting tools
+### 💊 Pharmacy Management
+- Medication inventory tracking
+- Prescription processing
+- Automated low-stock alerts
+- Medication dispensing logs
 
-- **Pharmacy Module**
-  - Medication dispensing
-  - Inventory management
-  - Prescription verification
-  - Automated refill alerts
+### 🧪 Laboratory Services
+- Test order management
+- Result recording and sharing
+- Sample tracking
+- Integration with patient records
 
-- **Administrative Dashboard**
-  - Staff management
-  - Department oversight
-  - Financial reporting
-  - Resource allocation
+### 💳 Billing System
+- Mock payment portal integration
+- Insurance processing
+- Itemized billing for services
+- Payment history and receipts
+- Multiple payment methods supported
+
+### 📊 Reports and Analytics
+- Staff performance metrics
+- Patient demographic analysis
+- Financial reports
+- Operational efficiency tracking
 
 ## 🛠️ Technology Stack
 
-- **Frontend**: 
-  - Next.js (React Framework)
-  - Tailwind CSS
-  - SWR for data fetching
-  - React Query
+- **Frontend**: Next.js, React, Tailwind CSS
+- **Backend**: Next.js API Routes, Supabase
+- **Database**: PostgreSQL (via Supabase)
+- **Authentication**: NextAuth.js integrated with Supabase
+- **Development Environment**: Cursor AI Editor
+- **Deployment**: Vercel
+- **Version Control**: Git, GitHub
 
-- **Backend**:
-  - Next.js API Routes
-  - Supabase for database and authentication
-
-- **Database**:
-  - PostgreSQL (via Supabase)
-
-- **Authentication**:
-  - Supabase Auth with role-based permissions
-
-- **Development**:
-  - Cursor AI code editor for enhanced productivity
-  - TypeScript for type safety
-  - ESLint & Prettier for code quality
-
-- **Deployment**:
-  - Vercel for hosting
-  - CI/CD pipeline integration
-
-## 📋 Getting Started
+## 🚀 Getting Started
 
 ### Prerequisites
-
-- Node.js 18+ 
+- Node.js (v16.x or higher)
 - npm or yarn
 - Supabase account
-- Git
+- GitHub account
 
 ### Installation
 
@@ -98,76 +96,91 @@ yarn install
 
 3. Set up environment variables
 ```bash
-cp .env.example .env.local
-```
-
-4. Add your Supabase credentials to `.env.local`
-```
+# Create a .env.local file and add the following variables
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+NEXTAUTH_URL=your_app_url
+NEXTAUTH_SECRET=your_nextauth_secret
 ```
 
-5. Run the development server
+4. Run the development server
 ```bash
 npm run dev
 # or
 yarn dev
 ```
 
-6. Open [http://localhost:3000](http://localhost:3000) in your browser
+5. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## 🔒 Role-Based Access Control
+## 🔑 Demo Login Credentials
 
-This system implements a comprehensive role-based access control system:
+### Doctor Account
+- **ID**: Q89PGF
+- **Password**: 7895474
 
-| Role | Permissions |
-|------|-------------|
-| Patient | Book appointments, view medical records, access prescriptions |
-| Doctor | Manage patient files, create prescriptions, schedule appointments |
-| Lab Technician | Process test requests, upload results, manage lab inventory |
-| Pharmacist | Dispense medications, manage drug inventory, view prescriptions |
-| Administrator | Full system access, user management, reporting functions |
+### Administrator Account
+- **ID**: YT89
+- **Password**: securepassword2
 
-## 📊 Database Schema
+## 📝 API Documentation
 
-The application uses a relational database model with the following core tables:
+The API documentation is available at `/api/docs` when running the development server.
 
-- Users (with role specifications)
-- Patients
-- Appointments
-- Medical Records
-- Prescriptions
-- Laboratory Tests
-- Medications
-- Inventory
+## 🧪 Testing
 
-## 🚀 Deployment
+```bash
+npm run test
+# or
+yarn test
+```
 
-This project is deployed on Vercel, offering:
+## 🔄 CI/CD Pipeline
 
-- Automatic deployments from GitHub
-- Preview deployments for pull requests
-- Global CDN for optimal performance
-- Serverless functions for API routes
+This project uses GitHub Actions for continuous integration and continuous deployment to Vercel.
+
+## 📦 Project Structure
+
+```
+hospital-management-system/
+├── components/              # React components
+├── pages/                   # Next.js pages
+│   ├── api/                 # API routes
+│   ├── admin/               # Admin portal
+│   ├── doctor/              # Doctor portal
+│   ├── patient/             # Patient portal
+│   ├── lab/                 # Lab assistant portal
+│   └── pharmacy/            # Pharmacist portal
+├── public/                  # Static assets
+├── styles/                  # Global styles
+├── lib/                     # Utility functions
+│   ├── supabase.js          # Supabase client
+│   └── auth.js              # Authentication helpers
+├── contexts/                # React contexts
+├── hooks/                   # Custom React hooks
+└── prisma/                  # Database schema
+```
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 📝 License
+## 📜 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+Distributed under the MIT License. See `LICENSE` for more information.
+
+## 📞 Contact
+
+Project Link: [https://github.com/yourusername/hospital-management-system](https://github.com/yourusername/hospital-management-system)
 
 ## 🙏 Acknowledgements
 
 - [Next.js](https://nextjs.org/)
 - [Supabase](https://supabase.io/)
-- [Vercel](https://vercel.com/)
-- [Cursor AI](https://cursor.so/)
+- [NextAuth.js](https://next-auth.js.org/)
 - [Tailwind CSS](https://tailwindcss.com/)
+- [Cursor AI](https://cursor.sh/)
+- [Vercel](https://vercel.com/)
