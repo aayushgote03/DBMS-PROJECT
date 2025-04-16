@@ -244,6 +244,9 @@ export default function AddDoctor() {
         const updated_location = await updateLocationStatus(location_id);
         console.log(updated_location, "im here updated location");
 
+        // Remove the selected room from available rooms after successful submission
+        setAvailableRooms(prev => prev.filter(room => room.location_id !== selected_room_id));
+        setSelectedRoomId('');
       }
       
       setMessage({ 
