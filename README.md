@@ -1,104 +1,186 @@
-<a href="https://demo-nextjs-with-supabase.vercel.app/">
-  <img alt="Next.js and Supabase Starter Kit - the fastest way to build apps with Next.js and Supabase" src="https://demo-nextjs-with-supabase.vercel.app/opengraph-image.png">
-  <h1 align="center">Next.js and Supabase Starter Kit</h1>
-</a>
+# Hospital Management System (in development phase)
 
-<p align="center">
- The fastest way to build apps with Next.js and Supabase
-</p>
+![Hospital Management System](https://img.shields.io/badge/Status-Live-brightgreen)
+![Version](https://img.shields.io/badge/Version-1.0.0-blue)
+![Next.js](https://img.shields.io/badge/Next.js-14.0-black)
+![Supabase](https://img.shields.io/badge/Supabase-2.0-darkgreen)
+![NextAuth.js](https://img.shields.io/badge/NextAuth.js-4.0-orange)
 
-<p align="center">
-  <a href="#features"><strong>Features</strong></a> ·
-  <a href="#demo"><strong>Demo</strong></a> ·
-  <a href="#deploy-to-vercel"><strong>Deploy to Vercel</strong></a> ·
-  <a href="#clone-and-run-locally"><strong>Clone and run locally</strong></a> ·
-  <a href="#feedback-and-issues"><strong>Feedback and issues</strong></a>
-  <a href="#more-supabase-examples"><strong>More Examples</strong></a>
-</p>
-<br/>
+## 🏥 Live Demo
 
-## Features
+Visit the live application: [Hospital Management System](https://dbms-project-hospital-mangement.vercel.app/)
 
-- Works across the entire [Next.js](https://nextjs.org) stack
-  - App Router
-  - Pages Router
-  - Middleware
-  - Client
-  - Server
-  - It just works!
-- supabase-ssr. A package to configure Supabase Auth to use cookies
-- Styling with [Tailwind CSS](https://tailwindcss.com)
-- Components with [shadcn/ui](https://ui.shadcn.com/)
-- Optional deployment with [Supabase Vercel Integration and Vercel deploy](#deploy-your-own)
-  - Environment variables automatically assigned to Vercel project
+## 📋 Overview
 
-## Demo
+This Hospital Management System is a comprehensive web application built with Next.js, Supabase, and NextAuth.js for authentication. Designed to streamline hospital operations and improve patient care, the system features role-based access control, appointment scheduling, electronic medical records, billing management, and more. Developed using the Cursor AI editor and deployed on Vercel, this application provides a modern solution for healthcare facilities.
 
-You can view a fully working demo at [demo-nextjs-with-supabase.vercel.app](https://demo-nextjs-with-supabase.vercel.app/).
+## ✨ Key Features
 
-## Deploy to Vercel
+### 🔐 Role-Based Access Control
+The system implements an ERP-like structure where users log in according to their role in the hospital:
+- **Patients**: Book appointments, view medical history, make payments
+- **Doctors**: Manage appointments, update patient records, prescribe medications
+- **Lab Assistants**: Process lab tests, upload results
+- **Pharmacists**: Manage medication inventory, process prescriptions
+- **Administrators**: Oversee all hospital operations, manage staff, access reports
 
-Vercel deployment will guide you through creating a Supabase account and project.
+### 📅 Appointment Management
+- Easy appointment booking interface
+- Real-time availability checking
+- Automated notifications and reminders
+- Rescheduling and cancellation options
 
-After installation of the Supabase integration, all relevant environment variables will be assigned to the project so the deployment is fully functioning.
+### 📋 Patient Records
+- Comprehensive electronic medical records
+- Medical history tracking
+- Prescription management
+- Test results storage and retrieval
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-supabase&project-name=nextjs-with-supabase&repository-name=nextjs-with-supabase&demo-title=nextjs-with-supabase&demo-description=This+starter+configures+Supabase+Auth+to+use+cookies%2C+making+the+user%27s+session+available+throughout+the+entire+Next.js+app+-+Client+Components%2C+Server+Components%2C+Route+Handlers%2C+Server+Actions+and+Middleware.&demo-url=https%3A%2F%2Fdemo-nextjs-with-supabase.vercel.app%2F&external-id=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-supabase&demo-image=https%3A%2F%2Fdemo-nextjs-with-supabase.vercel.app%2Fopengraph-image.png)
+### 💊 Pharmacy Management
+- Medication inventory tracking
+- Prescription processing
+- Automated low-stock alerts
+- Medication dispensing logs
 
-The above will also clone the Starter kit to your GitHub, you can clone that locally and develop locally.
+### 🧪 Laboratory Services
+- Test order management
+- Result recording and sharing
+- Sample tracking
+- Integration with patient records
 
-If you wish to just develop locally and not deploy to Vercel, [follow the steps below](#clone-and-run-locally).
+### 💳 Billing System
+- Mock payment portal integration
+- Insurance processing
+- Itemized billing for services
+- Payment history and receipts
+- Multiple payment methods supported
 
-## Clone and run locally
+### 📊 Reports and Analytics
+- Staff performance metrics
+- Patient demographic analysis
+- Financial reports
+- Operational efficiency tracking
 
-1. You'll first need a Supabase project which can be made [via the Supabase dashboard](https://database.new)
+## 🛠️ Technology Stack
 
-2. Create a Next.js app using the Supabase Starter template npx command
+- **Frontend**: Next.js, React, Tailwind CSS
+- **Backend**: Next.js API Routes, Supabase
+- **Database**: PostgreSQL (via Supabase)
+- **Authentication**: NextAuth.js integrated with Supabase
+- **Development Environment**: Cursor AI Editor
+- **Deployment**: Vercel
+- **Version Control**: Git, GitHub
 
-   ```bash
-   npx create-next-app --example with-supabase with-supabase-app
-   ```
+## 🚀 Getting Started
 
-   ```bash
-   yarn create next-app --example with-supabase with-supabase-app
-   ```
+### Prerequisites
+- Node.js (v16.x or higher)
+- npm or yarn
+- Supabase account
+- GitHub account
 
-   ```bash
-   pnpm create next-app --example with-supabase with-supabase-app
-   ```
+### Installation
 
-3. Use `cd` to change into the app's directory
+1. Clone the repository
+```bash
+git clone https://github.com/yourusername/hospital-management-system.git
+cd hospital-management-system
+```
 
-   ```bash
-   cd with-supabase-app
-   ```
+2. Install dependencies
+```bash
+npm install
+# or
+yarn install
+```
 
-4. Rename `.env.example` to `.env.local` and update the following:
+3. Set up environment variables
+```bash
+# Create a .env.local file and add the following variables
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+NEXTAUTH_URL=your_app_url
+NEXTAUTH_SECRET=your_nextauth_secret
+```
 
-   ```
-   NEXT_PUBLIC_SUPABASE_URL=[INSERT SUPABASE PROJECT URL]
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=[INSERT SUPABASE PROJECT API ANON KEY]
-   ```
+4. Run the development server
+```bash
+npm run dev
+# or
+yarn dev
+```
 
-   Both `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` can be found in [your Supabase project's API settings](https://app.supabase.com/project/_/settings/api)
+5. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-5. You can now run the Next.js local development server:
+## 🔑 Demo Login Credentials
 
-   ```bash
-   npm run dev
-   ```
+### Doctor Account
+- **ID**: Q89PGF
+- **Password**: 7895474
 
-   The starter kit should now be running on [localhost:3000](http://localhost:3000/).
+### Administrator Account
+- **ID**: YT89
+- **Password**: securepassword2
 
-6. This template comes with the default shadcn/ui style initialized. If you instead want other ui.shadcn styles, delete `components.json` and [re-install shadcn/ui](https://ui.shadcn.com/docs/installation/next)
+## 📝 API Documentation
 
-> Check out [the docs for Local Development](https://supabase.com/docs/guides/getting-started/local-development) to also run Supabase locally.
+The API documentation is available at `/api/docs` when running the development server.
 
-## Feedback and issues
+## 🧪 Testing
 
-Please file feedback and issues over on the [Supabase GitHub org](https://github.com/supabase/supabase/issues/new/choose).
+```bash
+npm run test
+# or
+yarn test
+```
 
-## More Supabase examples
+## 🔄 CI/CD Pipeline
 
-- [Next.js Subscription Payments Starter](https://github.com/vercel/nextjs-subscription-payments)
-- [Cookie-based Auth and the Next.js 13 App Router (free course)](https://youtube.com/playlist?list=PL5S4mPUpp4OtMhpnp93EFSo42iQ40XjbF)
-- [Supabase Auth and the Next.js App Router](https://github.com/supabase/supabase/tree/master/examples/auth/nextjs)
+This project uses GitHub Actions for continuous integration and continuous deployment to Vercel.
+
+## 📦 Project Structure
+
+```
+hospital-management-system/
+├── components/              # React components
+├── pages/                   # Next.js pages
+│   ├── api/                 # API routes
+│   ├── admin/               # Admin portal
+│   ├── doctor/              # Doctor portal
+│   ├── patient/             # Patient portal
+│   ├── lab/                 # Lab assistant portal
+│   └── pharmacy/            # Pharmacist portal
+├── public/                  # Static assets
+├── styles/                  # Global styles
+├── lib/                     # Utility functions
+│   ├── supabase.js          # Supabase client
+│   └── auth.js              # Authentication helpers
+├── contexts/                # React contexts
+├── hooks/                   # Custom React hooks
+└── prisma/                  # Database schema
+```
+
+## 🤝 Contributing
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📜 License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+## 📞 Contact
+
+Project Link: [https://github.com/yourusername/hospital-management-system](https://github.com/yourusername/hospital-management-system)
+
+## 🙏 Acknowledgements
+
+- [Next.js](https://nextjs.org/)
+- [Supabase](https://supabase.io/)
+- [NextAuth.js](https://next-auth.js.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Cursor AI](https://cursor.sh/)
+- [Vercel](https://vercel.com/)
