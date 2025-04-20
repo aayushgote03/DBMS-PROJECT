@@ -21,11 +21,14 @@ const handlebedallotment = async (appointmentId: string, location: string) => {
 
     console.log(patient_id, "patient_id");
 
-    const { data, error } = await supabase.from('beds').update({
-        patient_id: patient_id,
-        appointment_id: appointmentId,
-        allot_date_time: todaydateandtime
-    }).eq('location_id', selected_bed_id).eq('bed_no', selected_bed_bed_no);
+    const { data, error } = await supabase.rpc('update_bed_allocation', {
+        selected_location_id: selected_bed_id,
+        selected_bed_no: selected_bed_bed_no,
+        new_patient_id: patient_id,
+        new_appointment_id: appointmentId,
+        new_allot_date_time: todaydateandtime
+    });
+    
 
 
     console.log(data, "data of beds");
