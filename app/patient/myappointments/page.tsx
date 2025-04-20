@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { supabase } from '@/providers/db';
 import Link from 'next/link';
+import ConsentForAdmit from '@/components/consentforadmit';
 
 
 // 📋 Define appointment data structure
@@ -18,8 +19,22 @@ interface Appointment {
     consult_fees: {
       status: string;
     };
+    pharmacy_bill?: {
+      status: string;
+    };
   };
   attended_flag: boolean;
+    prescription: {
+    appointment_id: string;
+    admit_advise: {
+      info: {
+        description: string;
+        ward_Type: string;
+        location_id: string;
+      },
+      patient_consent: string;
+    };
+  };
 }
 
 interface Bill {
@@ -54,7 +69,7 @@ const MyAppointments = () => {
         // 📥 Fetch appointments from database
         const { data: appointmentsData, error: appointmentsError } = await supabase
           .from('appointment')
-          .select('appointment_id, date, time, doctor(name, specialization), bill(appointment_id, consult_fees), attended_flag')
+          .select('appointment_id, date, time, doctor(name, specialization), bill(appointment_id, consult_fees, pharmacy_bill), attended_flag, prescription(appointment_id, admit_advise)')
           .eq('p_id', patientInfo.p_id);
         
         console.log(appointmentsData, "appointmentsData from supabase");
@@ -155,13 +170,26 @@ const MyAppointments = () => {
                       Paid
                     </div>
                   )}
+                  {appointment.bill.pharmacy_bill && appointment.bill.pharmacy_bill.status === 'unpaid' && (
+                    <div className="mt-2">
+                      <Link href={`/feepayment?appointment_id=${appointment.bill.appointment_id}&type=pharmacy`} className='text-blue-500'>
+                        Pay Pharmacy Bill
+                      </Link>
+                    </div>
+                  )}
                 </div>
                   {appointment.attended_flag === true && (
                   <div className='text-blue-500'>
                     <Link href={`/patient/viewprescription?appointment_id=${appointment.appointment_id}`}>view prescription</Link>
                   </div>
                 )}
+                
               </div>
+              {appointment.prescription && appointment.prescription.admit_advise && appointment.prescription.admit_advise.patient_consent === 'pending' && appointment.prescription.admit_advise.info.location_id && (
+                  <div className='text-blue-500'>
+                      <ConsentForAdmit appointmentId={appointment.appointment_id} onClose={() => {}} location={appointment.prescription.admit_advise.info.location_id} />
+                  </div>
+                )}
             </div>
           ))}
         </div>

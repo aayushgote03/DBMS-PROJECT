@@ -39,6 +39,8 @@ const BookAppointmentPage = () => {
   const [inputTime, setInputTime] = useState<string>('');
   const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>([]);
   const [error, setError] = useState<string>('');
+  const [selectedTimeObj, setSelectedTimeObj] = useState<Date | null>(null);
+  const [currentTimeObj, setCurrentTimeObj] = useState<Date | null>(null);
 
   const [successMessage, setSuccessMessage] = useState<string>('');
   const [showViewAppointments, setShowViewAppointments] = useState<boolean>(false);
@@ -170,8 +172,22 @@ const BookAppointmentPage = () => {
     const currentTime = new Date();
     console.log(currentTime, "im here current time");
     console.log(inputTimeDate, "im here input time date");
+    
+    // Set the selected and current time objects in state
+    setSelectedTimeObj(inputTimeDate);
+    setCurrentTimeObj(currentTime);
+    console.log("Selected time:", inputTimeDate);
+    console.log("Current time:", currentTime);
 
-    if(inputTimeDate < currentTime){
+    // Check if the selected date is today
+    const today = new Date();
+    console.log(today, "im here today");
+    const isToday = date.getDate() === today.getDate() && 
+                    date.getMonth() === today.getMonth() && 
+                    date.getFullYear() === today.getFullYear();
+
+    // Only check if time is in the past if the selected date is today
+    if(isToday && inputTimeDate <= currentTime){
       console.log(currentTime, "im in if");
       setError('Time cannot be in the past');
       return false;

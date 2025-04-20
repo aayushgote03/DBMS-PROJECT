@@ -17,7 +17,8 @@ function FeePaymentContent() {
   const [isLoading, setIsLoading] = useState(true);
   const searchParams = useSearchParams();
   const appointment_id = searchParams.get('appointment_id');
-  console.log(appointment_id);
+  const paymentType = searchParams.get('type');
+  console.log(appointment_id, paymentType);
 
   useEffect(() => {
     const fetchBill = async () => {
@@ -39,7 +40,12 @@ function FeePaymentContent() {
             cvv: '',
             amount: data.amount || ''
           }));
-          setpaymentamount(data.consult_fees?.amount || 0);
+          
+          if (paymentType === 'pharmacy') {
+            setpaymentamount(data.pharmacy_bill?.amount || 0);
+          } else {
+            setpaymentamount(data.consult_fees?.amount || 0);
+          }
         }
         
         console.log(data, "im here bill");
@@ -53,7 +59,7 @@ function FeePaymentContent() {
     if (appointment_id) {
       fetchBill();
     }
-  }, [appointment_id]);
+  }, [appointment_id, paymentType]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -66,39 +72,45 @@ function FeePaymentContent() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // First delete the existing bill
-    const { error: deleteError } = await supabase
+    // First get the existing bill
+    const { data: existingBill, error: fetchError } = await supabase
       .from('bill')
-      .delete()
-      .eq('appointment_id', appointment_id);
-
-    console.log(deleteError, "im here deleteError");
+      .select('*')
+      .eq('appointment_id', appointment_id)
+      .single();
+      
+    if (fetchError) {
+      console.error("Error fetching existing bill:", fetchError);
+      return;
+    }
     
-    if (deleteError) {
-      console.error("Error deleting bill:", deleteError);
-      return;
+    // Prepare the updated bill data
+    let updatedBill = { ...existingBill };
+    
+    if (paymentType === 'pharmacy') {
+      updatedBill.pharmacy_bill = {
+        ...existingBill.pharmacy_bill,
+        status: 'paid'
+      };
+    } else {
+      updatedBill.consult_fees = {
+        ...existingBill.consult_fees,
+        status: 'paid'
+      };
     }
 
-    // Then insert a new bill with updated information
-    const { data, error: insertError } = await supabase
+    // Update the bill
+    const { error: updateError } = await supabase
       .from('bill')
-      .insert({
-        appointment_id: appointment_id,
-        consult_fees: {
-          amount: paymentamount,
-          status: 'paid'
-        }
-      })
-      .select();
-
-    console.log(data, "im here data");
-
-    if (insertError) {
-      console.error("Error inserting bill:", insertError);
+      .update(updatedBill)
+      .eq('appointment_id', appointment_id);
+    
+    if (updateError) {
+      console.error("Error updating bill:", updateError);
       return;
     }
 
-    console.log(data, "im here data");
+    console.log("Payment successful");
 
     // Simulate payment processing
     setTimeout(() => {
@@ -126,7 +138,9 @@ function FeePaymentContent() {
             <h2 className="text-xl font-semibold text-gray-800 mb-4">Payment Details</h2>
             <div className="bg-blue-50 p-4 rounded-md mb-6">
               <div className="flex justify-between items-center">
-                <span className="text-gray-700">Consultation Fee:</span>
+                <span className="text-gray-700">
+                  {paymentType === 'pharmacy' ? 'Pharmacy Bill:' : 'Consultation Fee:'}
+                </span>
                 <span className="font-bold text-blue-700">₹{paymentamount}</span>
               </div>
             </div>

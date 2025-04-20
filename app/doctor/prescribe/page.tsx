@@ -20,6 +20,17 @@ interface Prescription {
     description: string;
   }>;
   created_at: string;
+  admit_advise?: {
+    info: {
+      description: string;
+      reportingTime: string;
+      admissionDate: string;
+      dischargeDate: string;
+      wardType: string;
+      location_id: string;
+    },
+    patient_consent: string;
+  };
 }
 
 // Component that uses searchParams
@@ -38,6 +49,19 @@ function PrescribeContent() {
   const [diagnosis, setDiagnosis] = useState('');
   const [medications, setMedications] = useState([{ name: '', dosage: '', comments: '', duration: '' }]);
   const [tests, setTests] = useState([{ name: '', description: '' }]);
+  const [admissionAdvised, setAdmissionAdvised] = useState(false);
+  const [admissionNotes, setAdmissionNotes] = useState('');
+  const [reportingTime, setReportingTime] = useState('');
+  const [admissionDate, setAdmissionDate] = useState('');
+  const [dischargeDate, setDischargeDate] = useState('');
+  const [wardType, setWardType] = useState('Male General Ward');
+  
+  const pairs: Record<string, string> = {
+    "Female General Ward": "27c2631a-55f9-443b-ac2b-dba264705f71",
+    "Male General Ward": "30d28b93-3b3a-44ed-9849-8ac0b32b1102",
+    "Maternity Ward": "87b21142-ca66-4472-88b3-0e73c3935c42",
+    "Children Ward": "e0642940-f4b4-4b8c-a8ca-e8c41acce6f8"
+  }
   
   useEffect(() => {
     // Get doctor info from local storage ✨
@@ -154,8 +178,23 @@ function PrescribeContent() {
           duration: med.duration
         })),
         Tests: tests,
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
       };
+      
+      // Add admit_advise data if admission is advised
+      if (admissionAdvised) {
+        prescription.admit_advise = {
+          info: {
+            description: admissionNotes,
+            reportingTime: reportingTime,
+            admissionDate: admissionDate,
+            dischargeDate: dischargeDate,
+            wardType: wardType,
+            location_id: pairs[wardType]
+          },
+          patient_consent: "pending"
+        };
+      }
       
       const { data, error } = await supabase
         .from('prescription')
@@ -352,6 +391,90 @@ function PrescribeContent() {
                 </div>
               </div>
             ))}
+          </div>
+          
+          <div className="mb-8 p-4 border border-gray-200 rounded-lg hover:border-indigo-300 transition-colors">
+            <h3 className="text-lg font-medium flex items-center mb-3">
+              <span className="mr-2">🏥</span>Hospital Admission
+            </h3>
+            <div className="mb-3">
+              <label className="flex items-center text-gray-700 font-medium cursor-pointer">
+                <input 
+                  type="checkbox" 
+                  checked={admissionAdvised}
+                  onChange={(e) => setAdmissionAdvised(e.target.checked)}
+                  className="mr-2 h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                />
+                Advise hospital admission
+              </label>
+            </div>
+            {admissionAdvised && (
+              <div>
+                <label className="block text-gray-700 text-sm font-medium mb-1">
+                  <span className="mr-1">📝</span>Admission Notes
+                </label>
+                <textarea 
+                  className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500 focus:outline-none mb-3"
+                  rows={3}
+                  value={admissionNotes}
+                  onChange={(e) => setAdmissionNotes(e.target.value)}
+                  placeholder="Reason for admission, special instructions, etc."
+                />
+                
+                <div className="grid grid-cols-2 gap-4 mb-3">
+                  <div>
+                    <label className="block text-gray-700 text-sm font-medium mb-1">
+                      <span className="mr-1">⏰</span>Reporting Time
+                    </label>
+                    <input 
+                      type="time" 
+                      className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      value={reportingTime}
+                      onChange={(e) => setReportingTime(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 text-sm font-medium mb-1">
+                      <span className="mr-1">📅</span>Admission Date
+                    </label>
+                    <input 
+                      type="date" 
+                      className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      value={admissionDate}
+                      onChange={(e) => setAdmissionDate(e.target.value)}
+                    />
+                  </div>
+                </div>
+                
+                <div className="mb-3">
+                  <label className="block text-gray-700 text-sm font-medium mb-1">
+                    <span className="mr-1">📅</span>Expected Discharge Date
+                  </label>
+                  <input 
+                    type="date" 
+                    className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                    value={dischargeDate}
+                    onChange={(e) => setDischargeDate(e.target.value)}
+                  />
+                </div>
+                
+                <div className="mb-3">
+                  <label className="block text-gray-700 text-sm font-medium mb-1">
+                    <span className="mr-1">🛏️</span>Ward Type
+                  </label>
+                  <select
+                    className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                    value={wardType}
+                    onChange={(e) => setWardType(e.target.value)}
+                  >
+                    <option value="Male General Ward">Male General Ward</option>
+                    <option value="Female General Ward">Female General Ward</option>
+                    <option value="Maternity Ward">Maternity Ward</option>
+                    <option value="Children Ward">Children Ward</option>
+                  </select>
+                </div>
+              </div>
+            )}
           </div>
           
           <div className="flex justify-end">

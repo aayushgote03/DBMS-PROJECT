@@ -40,8 +40,10 @@ const GiveMedicinePage = () => {
         // Fetch prescriptions where to_pharmacist is true
         const { data, error } = await supabase
           .from('prescription')
-          .select('appointment_id, medication, p_id, patients(p_id, name), d_id, doctor(d_id, name)')
+          .select('appointment_id, bill(appointment_id, pharmacy_bill), medication, p_id, patients(p_id, name), d_id, doctor(d_id, name)')
           .eq('to_pharmacist', true)
+
+        
 
           console.log(data, "this is data");
 
@@ -151,7 +153,7 @@ const GiveMedicinePage = () => {
   )
 
   return (
-    <div className="container mx-auto px-4 py-8 mt-16">
+    <div className="max-w-6xl mx-auto px-4 py-8 mt-16">
       <h1 className="text-2xl font-bold mb-6">Pharmacy Dispensary Dashboard</h1>
       
       {notification && (
@@ -214,9 +216,9 @@ const GiveMedicinePage = () => {
           {searchTerm && <p className="text-sm text-gray-500">Try adjusting your search or filters.</p>}
         </div>
       ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6">
           {filteredPrescriptions.map((prescription) => (
-            <div key={prescription.id} className={`bg-white p-6 rounded-lg shadow-md transition-all duration-300 hover:shadow-lg ${prescription.is_given ? 'border-l-4 border-green-500' : 'border-l-4 border-yellow-500'}`}>
+            <div key={`prescription-${prescription.p_id}-${prescription.appointment_id}`} className={`bg-white p-6 rounded-lg shadow-md transition-all duration-300 hover:shadow-lg ${prescription.is_given ? 'border-l-4 border-green-500' : 'border-l-4 border-yellow-500'}`}>
               <div className="flex justify-between items-start mb-4">
                 <h2 className="text-xl font-semibold">Prescription #{prescription.p_id}</h2>
                 <span className={`px-2 py-1 rounded-full text-xs font-medium ${prescription.is_given ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
@@ -227,7 +229,7 @@ const GiveMedicinePage = () => {
               <div className="mb-4">
                 <h3 className="text-lg font-semibold mb-2">Medications:</h3>
                 {prescription.medication.map((med, index) => (
-                  <div key={index} className="mt-2 p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors">
+                  <div key={`med-${prescription.p_id}-${index}`} className="mt-2 p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors">
                     <p className="font-medium text-blue-700">{med.name}</p>
                     <div className="grid grid-cols-2 gap-2 mt-1 text-sm">
                       <p className="text-gray-600"><span className="font-medium">Dosage:</span> {med.dosage}</p>

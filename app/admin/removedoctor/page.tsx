@@ -42,12 +42,42 @@ const RemoveDoctorPage = () => {
 
   const handleRemoveDoctor = async (doctorId: number) => {
     try {
-      const { error } = await supabase
+      const { data: doctorData, error } = await supabase
         .from('doctor')
         .delete()
         .eq('d_id', doctorId)
+        .select();
+       
+      console.log(doctorData, "doctorData");
+      let location_id;
+      let doctor_id;
+      if (doctorData) {
+        location_id = doctorData[0].location_id;
+        doctor_id = doctorData[0].d_id;
+        console.log(location_id, "location_id");
+      }
+
+      const doctor_session = localStorage.getItem('doctorInfo');
+      let doctor_id_session; 
+      if (doctor_session) {
+        const doctor_session_data = JSON.parse(doctor_session);
+        console.log(doctor_session_data, "doctor_session_data");
+        doctor_id_session = doctor_session_data.d_id;
+      }
 
       if (error) throw error
+
+      else {
+        if(doctor_id_session === doctor_id) {
+          const { error: error2 } = await supabase.rpc('unassign_location', {
+            loc_id: location_id
+          });
+        }
+            
+
+        if (error) throw error; 
+      }
+      
 
       setDoctors(doctors.filter(doctor => doctor.d_id !== doctorId))
       setSuccessMessage('Doctor removed successfully')
