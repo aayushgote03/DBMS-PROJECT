@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-
+import AdmissionReminder from '@/components/admissionredimder'
 
 const PatientLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname()
@@ -160,6 +160,7 @@ const PatientLayout = ({ children }: { children: React.ReactNode }) => {
 
       {/* Main Content with padding for fixed navbar */}
       <main className="pt-20 pb-6">
+        <AdmissionReminder />
         {children}
       </main>
     </div>
