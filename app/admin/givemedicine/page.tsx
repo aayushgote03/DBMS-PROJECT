@@ -40,7 +40,7 @@ const GiveMedicinePage = () => {
         // Fetch prescriptions where to_pharmacist is true
         const { data, error } = await supabase
           .from('prescription')
-          .select('appointment_id, bill(appointment_id, pharmacy_bill), medication, p_id, patients(p_id, name), d_id, doctor(d_id, name)')
+          .select('appointment_id, medication, p_id, patients(p_id, name), d_id, doctor(d_id, name)')
           .eq('to_pharmacist', true)
 
         
