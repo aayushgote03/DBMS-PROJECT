@@ -274,18 +274,8 @@ const PatientInfoPage: React.FC = () => {
 
             {/* Action Buttons */}
             <div className="p-6 bg-gray-50 border-t flex flex-wrap gap-3">
-              <button className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition flex items-center">
-                <span className="mr-2">✏️</span> Edit Information
-              </button>
-              <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition flex items-center">
-                <span className="mr-2">📅</span> Schedule Appointment
-              </button>
-              <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center">
-                <span className="mr-2">📋</span> Medical Records
-              </button>
-              <button className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition flex items-center">
-                <span className="mr-2">🖨️</span> Print Details
-              </button>
+              
+              
             </div>
           </div>
 
