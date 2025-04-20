@@ -55,6 +55,8 @@ const ConsentForAdmit: React.FC<ConsentForAdmitProps> = ({ appointmentId, onClos
         setShowModal(false);
         onClose();
       }, 2000);
+
+      
     } catch (err: any) {
       console.error('Error updating consent:', err);
       setError(err.message);

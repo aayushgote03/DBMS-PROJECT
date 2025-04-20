@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import LogoutButton from '@/components/Logoutbutton'
+
 
 const PatientLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname()
@@ -106,9 +106,7 @@ const PatientLayout = ({ children }: { children: React.ReactNode }) => {
             </div>
 
             {/* Logout Button */}
-            <div className="hidden md:flex items-center">
-              <LogoutButton removeitem="patientInfo" />
-            </div>
+            
           </div>
         </div>
 
@@ -155,9 +153,7 @@ const PatientLayout = ({ children }: { children: React.ReactNode }) => {
             >
               My Appointments
             </Link>
-            <div className="px-3 py-2">
-              <LogoutButton removeitem="patientInfo" />
-            </div>
+            
           </div>
         </div>
       </nav>

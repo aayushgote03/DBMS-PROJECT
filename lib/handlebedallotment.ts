@@ -5,11 +5,41 @@ const handlebedallotment = async (appointmentId: string, location: string) => {
     const beds_in_selected_ward = await supabase.from('beds').select('*').eq('location_id', location);
     console.log(beds_in_selected_ward, "beds_in_selected_ward");
 
+    const available_beds = beds_in_selected_ward.data?.filter((bed) => bed.patient_id === null);
+    console.log(available_beds, "available_beds");
 
-   /* const { data, error } = await supabase.from('appointments').update({
-        bed_allotment: true,
-        bed_allotment_date: todaydateandtime
-    }).eq('id', appointmentId);*/
+    const selected_bed = available_beds?.[0];
+    const selected_bed_id = selected_bed?.location_id;
+    console.log(selected_bed_id, "selected_bed_id");
+    const selected_bed_bed_no = selected_bed?.bed_no;
+    console.log(selected_bed_bed_no, "selected_bed_bed_no");
+
+    const appointment_data = await supabase.from('appointment').select('p_id').eq('appointment_id', appointmentId);
+    console.log(appointment_data, "appointment_data");
+    const patient_id = appointment_data.data?.[0].p_id;
+    console.log(appointmentId, "appointmentId");
+
+    console.log(patient_id, "patient_id");
+
+    const { data, error } = await supabase.from('beds').update({
+        patient_id: patient_id,
+        appointment_id: appointmentId,
+        allot_date_time: todaydateandtime
+    }).eq('location_id', selected_bed_id).eq('bed_no', selected_bed_bed_no);
+
+
+    console.log(data, "data of beds");
+
+    if(error){
+        console.log(error, "error");
+        return {success: false, message: 'Bed allotment failed'};
+    }
+
+    if(data){
+        console.log(data, "data");
+        return {success: true, message: 'Bed allotted successfully'};
+    }
+
     
 }
 

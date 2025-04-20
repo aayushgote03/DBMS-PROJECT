@@ -180,10 +180,12 @@ const PatientInfoPage: React.FC = () => {
                   <span className="font-medium text-indigo-800">
                     {mockPatient?.cghs_private === 'CGHS' ? '🏥 CGHS Patient' : '🏢 Private Patient'}
                   </span>
-                  <LogoutButton removeitem="patientInfo" />
                 </div>
                 <div className="text-sm text-gray-500 mt-1">
                   ID: {mockPatient?.p_id?.substring(0, 8)}...
+                </div>
+                <div className="mt-2">
+                  <LogoutButton removeitem="patientInfo" />
                 </div>
               </div>
             </div>
