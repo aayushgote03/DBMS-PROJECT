@@ -1,4 +1,5 @@
 import { supabase } from "@/providers/db";
+import { daysBetweenDates } from "./findnumberofdays";
 
 const handlebedallotment = async (appointmentId: string, location: string) => {
     const todaydateandtime = new Date().toISOString();
@@ -39,7 +40,24 @@ const handlebedallotment = async (appointmentId: string, location: string) => {
     }
 
     if(data){
-        console.log(data, "data");
+
+
+        const {data: prescription_data} = await supabase.from('prescription').select('*').eq('appointment_id', appointmentId).single();
+        console.log(prescription_data, "prescription_data");
+
+        
+
+
+        /*const {data: data1, error: error1} = await supabase.from('bill').update({
+            p_id: patient_id,
+            appointment_id: appointmentId,
+            bed_no: selected_bed_bed_no,
+            location_id: selected_bed_id,
+            allot_date_time: todaydateandtime
+        }).eq('appointment_id', appointmentId);*/
+
+       
+
         return {success: true, message: 'Bed allotted successfully'};
     }
 

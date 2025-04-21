@@ -6,10 +6,10 @@ interface BedInfo {
   bed_no: string;
   allot_date_time: string;
   location_id: string;
-  location: {
+  location?: {
     description: string;
     floor: string;
-  }[];
+  };
 } 
 
 const AdmissionReminder: React.FC = () => {
@@ -88,10 +88,10 @@ const AdmissionReminder: React.FC = () => {
           <span className="font-semibold">Bed Number:</span> {bedInfo[0].bed_no}
         </p>
         <p className="text-sm text-gray-700">
-          <span className="font-semibold">Ward:</span> {bedInfo[0].location[0].description || 'Unknown'}
+          <span className="font-semibold">Ward:</span> {bedInfo[0].location?.description || 'Unknown'}
         </p>
         <p className="text-sm text-gray-700">
-          <span className="font-semibold">Floor:</span> {bedInfo[0].location[0].floor || 'Unknown'}
+          <span className="font-semibold">Floor:</span> {bedInfo[0].location?.floor || 'Unknown'}
         </p>
         <p className="text-sm text-gray-700">
           <span className="font-semibold">Allotted on:</span>{' '}
